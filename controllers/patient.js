@@ -1,4 +1,4 @@
-const userModel = require("../models/user");
+const patientModel = require("../models/patient");
 const jwt = require('jsonwebtoken');
 
 const secret = 'mysecretstotoken';
@@ -6,7 +6,7 @@ const secret = 'mysecretstotoken';
 module.exports = {
     allUsers: async(req, resp) => {
         try {
-            const users = await userModel.find();
+            const users = await patientModel.find({ type: "paciente" });
             resp.send(users);
         } catch (error) {
             resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
@@ -16,7 +16,7 @@ module.exports = {
         try {
             const usuario = req.body;
             console.log(usuario);
-            const user = await userModel.create(usuario);
+            const user = await patientModel.create(usuario);
             resp.send(user);
             //res.status(200).json({tipo:user.type}); 
 
@@ -31,7 +31,7 @@ module.exports = {
         try {
             const { cedula } = req.body;
             const entrada = req.body;
-            const userUpdate = await userModel.findOneAndUpdate({ cedula: cedula }, entrada);
+            const userUpdate = await patientModel.findOneAndUpdate({ cedula: cedula }, entrada);
             resp.send(userUpdate);
         } catch (error) {
             resp
@@ -43,7 +43,7 @@ module.exports = {
         try {
             const { cedula } = req.body;
             console.log("Controller cedula : " + cedula);
-            const userDelete = await userModel.deleteOne({ cedula: cedula });
+            const userDelete = await patientModel.deleteOne({ cedula: cedula });
             resp.send(userDelete);
         } catch (error) {
             resp
@@ -52,13 +52,43 @@ module.exports = {
         }
     },
     authenticateUser: function(req, res) {
+        //try {
         const { cedula, password } = req.body;
-        userModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(userModel);
+        /* const user = await patientModel.findOne({cedula:cedula});
+        console.log(user);
+        if (!user) {
+            res.status(401).send({
+                error: 'Incorrect email or password 1'
+            });
+        } else {
+                user.isCorrectPassword(password, (err, same) => {
+                if (err) {
+                    res.status(500).send({
+                        error: 'Internal error please try again'
+                    });
+                } else if (!same) {
+                    res.status(401).send({
+                        error: 'Incorrect email or password'
+                    });
+                } else {
+                    console.log(cedula);
+                    // Issue token
+                    const payload = { cedula };
+                    const token = jwt.sign(payload, secret, {
+                    expiresIn: '1h'
+                    });
+                    res.cookie('token', token, { httpOnly: true })
+                    .status(200);
+                }
+                });
+        }*/
+
+        patientModel.findOne({ cedula }, function(err, user) {
+            console.log(patientModel);
             if (err) {
                 console.error(err);
                 res.status(500).json({
-                    error: 'Internal error please try again 1'
+                    error: 'Internal error please try again'
                 });
             } else if (!user) {
                 res.status(401).json({
@@ -108,7 +138,7 @@ module.exports = {
         try {
             const { id_user } = req.body;
             console.log("id_user: " + id_user);
-            const users = await userModel.find({ _id: id_user });
+            const users = await patientModel.find({ _id: id_user });
             resp.send(users[0]);
             console.log(users[0]);
         } catch (error) {

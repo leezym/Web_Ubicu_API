@@ -11,7 +11,7 @@ const userScheme = new mongo.Schema({
     altura: { type: Number },
     direccion: { type: String },
     ciudad: { type: String },
-    type: { type: String }
+    tipo: { type: String }
 });
 
 userScheme.pre('save', function(next) {

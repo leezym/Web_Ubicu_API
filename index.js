@@ -1,11 +1,13 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const mongo = require("./db/connectionMongo");
 const cors = require('cors');
+const app = express();
+const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
+const userModel = require("./models/user");
 
-const app = express();
+mongo.conectar(app);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -35,11 +37,33 @@ const routeEjercicios = require("./routes/ejercicios")(app);
 const routeResults = require("./routes/results")(app);
 
 //test
-/*app.get("/getData", (req, res) => {
-    res.send("Hello");
-});*/
+app.post("/postData", async(req, res) => { //error
+    try {
+        const user = await userModel.create(usuario);
+        res.send("user");
+        //res.send(req.body);
 
-mongo.conectar(app);
+    } catch (error) {
+        res.send("error");
+        resp
+            .sendStatus(500)
+            .send({ msg: "ocurrio un error en el servidor" });
+    }
+});
+
+app.get("/getData", async(req, res) => { //funciona
+    try {
+        const user = await userModel.find();
+        res.send("user");
+
+    } catch (error) {
+        res.send("error");
+        resp
+            .sendStatus(500)
+            .send({ msg: "ocurrio un error en el servidor" });
+    }
+});
+
 
 const port = 5001;
 app.listen(port, () => { console.log(port) })

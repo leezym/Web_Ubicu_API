@@ -1,5 +1,6 @@
 const userModel = require("../models/user");
 const jwt = require('jsonwebtoken');
+const res = require("express/lib/response");
 
 const secret = 'mysecretstotoken';
 
@@ -14,11 +15,10 @@ module.exports = {
     },
     createUser: async(req, resp) => {
         try {
-            const usuario = req.body;
-            console.log(usuario);
+            res.send(req.body);
+            /*const usuario = req.body;
             const user = await userModel.create(usuario);
-            resp.send(user);
-            //res.status(200).json({tipo:user.type}); 
+            resp.send(user);*/
 
         } catch (error) {
             console.log(error);

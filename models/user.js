@@ -10,7 +10,7 @@ const userScheme = new mongo.Schema({
     telefono: { type: Number },
     email: { type: String },
     password: { type: String },
-    type: { type: String }
+    tipo: { type: String }
 });
 
 userScheme.pre('save', function(next) {

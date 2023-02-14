@@ -38,17 +38,15 @@ const routeResults = require("./routes/results")(app);
 
 //test
 app.post("/postData", async(req, res) => { //error
-    try {
-        const user = await userModel.create(usuario);
-        res.send("user");
-        //res.send(req.body);
-
-    } catch (error) {
-        res.send("error");
-        resp
-            .sendStatus(500)
-            .send({ msg: "ocurrio un error en el servidor" });
-    }
+    const user = new userModel({
+        nombre: req.body.nombre,
+        cedula: req.body.cedula,
+        telefono: req.body.telefono,
+        email: req.body.email,
+        password: req.body.password,
+        tipo: req.body.tipo
+    });
+    const saved = await user.save();
 });
 
 app.get("/getData", async(req, res) => { //funciona
@@ -65,5 +63,5 @@ app.get("/getData", async(req, res) => { //funciona
 });
 
 
-const port = 5001;
+const port = 8001;
 app.listen(port, () => { console.log(port) })

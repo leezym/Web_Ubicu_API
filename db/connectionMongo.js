@@ -17,9 +17,11 @@ module.exports = {
 
 const mongo = require("mongoose");
 
+mongo.Promise = global.Promise;
+
 module.exports = {
     conectar: async(app) => {
-        await mongo.connect("mongodb://admin:admin@44.198.30.162:27017/?directConnection=true/ubicu", {
+        await mongo.connect("mongodb://admin:admin@44.198.30.162:27017/?directConnection=true/ubicu?retryWrites=true&w=majority", {
             useNewUrlParser: true,
             useUnifiedTopology: true
         }, (err) => {
@@ -29,8 +31,8 @@ module.exports = {
                 console.log("Conectamos mongo y el servidor");
         })
 
-        app.listen(5000, () => {
-            console.log("Puerto 5000");
+        app.listen(8000, () => {
+            console.log("Puerto 8000");
         })
     }
 }

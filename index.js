@@ -5,8 +5,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-const userModel = require("./models/user");
-
 mongo.conectar(app);
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,8 +35,8 @@ const routeEjercicios = require("./routes/ejercicios")(app);
 const routeResults = require("./routes/results")(app);
 
 //test
-app.post("/postData", async(req, res) => { //error
-    const user = new userModel({
+/*app.post("/postData", async(req, resp) => { //error
+    /*const user = new userModel({
         nombre: req.body.nombre,
         cedula: req.body.cedula,
         telefono: req.body.telefono,
@@ -47,6 +45,18 @@ app.post("/postData", async(req, res) => { //error
         tipo: req.body.tipo
     });
     const saved = await user.save();
+    res.send(saved);
+    const usuario = req.body;
+    try {
+        const user = await userModel.create(usuario);
+        resp.send("user");
+    } catch (error) {
+        console.log(error);
+        resp
+            .sendStatus(500)
+            .send({ msg: "ocurrio un error en el servidor" });
+    }
+
 });
 
 app.get("/getData", async(req, res) => { //funciona
@@ -60,7 +70,7 @@ app.get("/getData", async(req, res) => { //funciona
             .sendStatus(500)
             .send({ msg: "ocurrio un error en el servidor" });
     }
-});
+});*/
 
 
 const port = 8001;

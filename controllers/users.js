@@ -14,11 +14,10 @@ module.exports = {
         }
     },
     createUser: async(req, resp) => {
+        const usuario = req.body;
         try {
-            res.send(req.body);
-            /*const usuario = req.body;
             const user = await userModel.create(usuario);
-            resp.send(user);*/
+            resp.send(user);
 
         } catch (error) {
             console.log(error);
@@ -28,8 +27,8 @@ module.exports = {
         }
     },
     updateUser: async(req, resp) => {
+        const { cedula } = req.body;
         try {
-            const { cedula } = req.body;
             const entrada = req.body;
             const userUpdate = await userModel.findOneAndUpdate({ cedula: cedula }, entrada);
             resp.send(userUpdate);
@@ -40,8 +39,8 @@ module.exports = {
         }
     },
     deleteUser: async(req, resp) => {
+        const { cedula } = req.body;
         try {
-            const { cedula } = req.body;
             console.log("Controller cedula : " + cedula);
             const userDelete = await userModel.deleteOne({ cedula: cedula });
             resp.send(userDelete);
@@ -95,18 +94,13 @@ module.exports = {
                 });
             }
         });
-        /* } catch (error) {
-             res
-             .status(500)
-             .send({msg:"ocurrio un error en el servidor"});
-         }*/
     },
     checkToken: function(req, resp) {
         resp.sendStatus(200);
     },
     getUserbyId: async(req, resp) => {
+        const { id_user } = req.body;
         try {
-            const { id_user } = req.body;
             console.log("id_user: " + id_user);
             const users = await userModel.find({ _id: id_user });
             resp.send(users[0]);

@@ -21,7 +21,7 @@ mongo.Promise = global.Promise;
 
 module.exports = {
     conectar: async(app) => {
-        await mongo.connect("mongodb://admin:admin@44.198.30.162:27017/?directConnection=true/ubicu?retryWrites=true&w=majority", {
+        await mongo.connect("mongodb://admin:admin@44.198.30.162:27017/?directConnection=true/ubicu?retryWrites=true&w=majority", { //?directConnection=true/ubicu?retryWrites=true&w=majority&authMechanism=SCRAM-SHA-1
             useNewUrlParser: true,
             useUnifiedTopology: true
         }, (err) => {

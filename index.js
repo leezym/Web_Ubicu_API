@@ -11,14 +11,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: '*',
-    /*allowedOrigins: [
+    //origin: '*',
+    allowedOrigins: [
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:5001',
         'https://server.ubicu.co/',
         'http://server.ubicu.co/'
-    ],*/
+    ],
     headers: [
         'X-HTTP-Method-Override', 'Content-Type', 'Accept', 'X-Access-Token', '*'
     ]
@@ -34,44 +34,5 @@ const routeNovedades = require("./routes/novedades")(app);
 const routeEjercicios = require("./routes/ejercicios")(app);
 const routeResults = require("./routes/results")(app);
 
-//test
-/*app.post("/postData", async(req, resp) => { //error
-    /*const user = new userModel({
-        nombre: req.body.nombre,
-        cedula: req.body.cedula,
-        telefono: req.body.telefono,
-        email: req.body.email,
-        password: req.body.password,
-        tipo: req.body.tipo
-    });
-    const saved = await user.save();
-    res.send(saved);
-    const usuario = req.body;
-    try {
-        const user = await userModel.create(usuario);
-        resp.send("user");
-    } catch (error) {
-        console.log(error);
-        resp
-            .sendStatus(500)
-            .send({ msg: "ocurrio un error en el servidor" });
-    }
-
-});
-
-app.get("/getData", async(req, res) => { //funciona
-    try {
-        const user = await userModel.find();
-        res.send("user");
-
-    } catch (error) {
-        res.send("error");
-        resp
-            .sendStatus(500)
-            .send({ msg: "ocurrio un error en el servidor" });
-    }
-});*/
-
-
-const port = 8001;
+const port = 5001;
 app.listen(port, () => { console.log(port) })

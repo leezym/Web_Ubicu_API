@@ -5,7 +5,7 @@ const saltRounds = 10;
 mongo.set('useCreateIndex', true);
 
 const userScheme = new mongo.Schema({
-    nombre: { type: String, required: true},
+    nombre: { type: String, required: true },
     cedula: { type: Number, unique: true, required: true },
     telefono: { type: Number, required: true },
     email: { type: String, required: true },

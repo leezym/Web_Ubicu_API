@@ -28,6 +28,7 @@ app.use(cors({
 app.use(cookieParser());
 
 const routeUsers = require("./routes/users")(app);
+const routePatients = require("./routes/patients")(app);
 const routeCultivos = require("./routes/cultivos")(app);
 const routeRecomendaciones = require("./routes/recomendaciones")(app);
 const routeNovedades = require("./routes/novedades")(app);

@@ -41,7 +41,6 @@ module.exports = {
     deleteUser: async(req, resp) => {
         const { cedula } = req.body;
         try {
-            console.log("Controller cedula : " + cedula);
             const userDelete = await userModel.deleteOne({ cedula: cedula });
             resp.send(userDelete);
         } catch (error) {

@@ -60,33 +60,22 @@ module.exports = {
             resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
         }
     },
-    authenticatePatient: async(req, resp) => {
-        console.log("authenticatePatient")
+    authenticatePatient: function(req, res) {
         const { cedula, password } = req.body;
-        patientModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(patientModel);
+        userModel.findOne({ cedula: cedula }, function(err, user) {
+            console.log(userModel);
             if (err) {
                 console.error(err);
-                res.status(500).json({
-                    error: 'Error de conexión, por favor intente de nuevo'
-                });
+                res.status(500).json('Error del servidor');
             } else if (!user) {
-                res.status(401).json({
-                    error: 'Usuario incorrecto'
-                });
+                res.status(401).json('Usuario incorrecto');
                 console.error(err);
             } else {
-                console.log("dsd: ", patientModel.body);
-                /*patientModel.body.telefono
                 user.isCorrectPassword(password, function(err, same) {
                     if (err) {
-                        res.status(500).json({
-                            error: 'Error de conexión, por favor intente de nuevo'
-                        });
+                        res.status(500).json('Error del servidor');
                     } else if (!same) {
-                        res.status(401).json({
-                            error: 'Contraseña incorrecta'
-                        });
+                        res.status(401).json('Contraseña incorrecta');
                     } else {
                         console.log(cedula);
                         console.log("Datos usuario:");
@@ -97,15 +86,11 @@ module.exports = {
                             expiresIn: '3h'
                         });
                         console.log(token);
-                        //res.cookie('token', token, { httpOnly: true }).sendStatus(200);
-                        //res.send(user)
                         res.status(200).json({ token: token, user: user });
-                        //res.status(200).json({token:token});
-                        //res.sendStatus(200);
 
                     }
-                });*/
+                });
             }
         });
-    }    
+    }
 }

@@ -9,7 +9,9 @@ module.exports = (app) =>{
     app.get("/allEjercicios",withAuth,ejercicioController.allEjercicios);
     app.post("/allEjerciciosByUser",ejercicioController.allEjerciciosByUser);
     app.post("/createEjercicio",ejercicioController.createEjercicio);
-    app.post("/updateEjercicio",ejercicioController.updateEjercicio);
+    app.put("/updateEjercicio",ejercicioController.updateEjercicio);
     app.post("/deleteEjercicio",ejercicioController.deleteEjercicio);
+    app.post("/getEjerciciobyId", ejercicioController.getEjerciciobyId);
+
 
 }

@@ -53,28 +53,29 @@ module.exports = {
         const { id_patient } = req.body;
         try {
             console.log("id_patient: " + id_patient);
-            const patients = await patientModel.find({ _id: id_patient });
-            resp.send(patients[0]);
-            console.log(patients[0]);
+            const patients = await patientModel.findOne({ _id: id_patient });
+            resp.send(patients);
         } catch (error) {
             resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
         }
     },
     authenticatePatient: function(req, res) {
         const { cedula, password } = req.body;
-        userModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(userModel);
+        patientModel.findOne({ cedula: cedula }, function(err, user) {
+            console.log(patientModel);
             if (err) {
-                console.error(err);
+                console.error('Error del servidor');
                 res.status(500).json('Error del servidor');
             } else if (!user) {
                 res.status(401).json('Usuario incorrecto');
-                console.error(err);
+                console.error('Usuario incorrecto');
             } else {
                 user.isCorrectPassword(password, function(err, same) {
                     if (err) {
+                        console.error('Error del servidor');
                         res.status(500).json('Error del servidor');
                     } else if (!same) {
+                        console.error('Contraseña incorrecta');
                         res.status(401).json('Contraseña incorrecta');
                     } else {
                         console.log(cedula);

@@ -12,29 +12,8 @@ module.exports = {
     allEjerciciosByUser: async (req,resp)=>{
         try {
             const {id_user} = req.body;
-            console.log(id_user);
+            console.log("sefsefef",id_user);
             const ejercicios = await ejercicioModel.find({id_user:id_user});
-            //agrego el nombre del jercicio anterior
-           //  console.log(ejercicios);
-            
-           /* ejercicios.forEach((element,key) => {
-                element.forEach((ele) => {
-                 console.log("element -> "+ ele);
-                /*if(element['type'] == "cicloActivo"){
-                    ejercicioModel.findOne({ element['id_user'] },function (err, ejercicioAnterior) {
-                    
-                    if (err) {
-                        console.error(err);
-                        res.status(500).json({
-                        error: 'Internal error please try again'
-                        });
-                    }else{
-                        element['anterior'] = ejercicioAnterior.nombre;
-                    }
-                });
-                } 
-                 });
-            });*/
 
             resp.send(ejercicios);
         } catch (error) {
@@ -44,7 +23,6 @@ module.exports = {
     createEjercicio:async (req,resp)=>{
         try {
             const ejercicio = req.body;
-            console.log(ejercicio);
             const user = await ejercicioModel.create(ejercicio);
             resp.send(ejercicio);
         } catch (error) {
@@ -58,6 +36,7 @@ module.exports = {
             const {id} = req.body;
             const entrada = req.body;
             const ejercicioUpdate = await ejercicioModel.findOneAndUpdate({_id:id},entrada);
+            console.log("resp", ejercicioUpdate)
             resp.send(ejercicioUpdate);
         } catch (error) {
             resp
@@ -76,6 +55,15 @@ module.exports = {
             resp
             .status(500)
             .send({msg:"ocurrio un error en el servidor"});
+        }
+    },
+    getEjerciciobyId: async(req, resp) => {
+        const { id_ejercicio } = req.body;
+        try {
+            const ejercicio = await ejercicioModel.find({ _id: id_ejercicio });
+            resp.send(ejercicio[0]);
+        } catch (error) {
+            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
         }
     }
 }

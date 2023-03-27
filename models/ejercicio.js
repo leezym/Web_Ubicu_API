@@ -13,7 +13,7 @@ const ejercicioScheme = new mongo.Schema({
     apnea: { type: Number },
     flujo: { type: Number },
     hora_inicio: { type: Number },
-    id_user: { type: String }
+    id_patient: { type: String }
 });
 
 module.exports = mongo.model("Ejercicio", ejercicioScheme);

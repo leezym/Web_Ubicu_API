@@ -60,7 +60,7 @@ module.exports = {
                 });
             } else if (!user) {
                 res.status(401).json({
-                    error: 'Incorrect email or password 1'
+                    error: 'Usuario incorrecto'
                 });
                 console.error(err);
             } else {
@@ -71,7 +71,7 @@ module.exports = {
                         });
                     } else if (!same) {
                         res.status(401).json({
-                            error: 'Incorrect email or password'
+                            error: 'Contraseña incorrecta'
                         });
                     } else {
                         console.log(cedula);

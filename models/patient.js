@@ -15,7 +15,8 @@ const userScheme = new mongo.Schema({
     altura: { type: Number },
     direccion: { type: String },
     ciudad: { type: String },
-    password: { type: String }
+    password: { type: String },
+    id_user: { type: String }
 });
 
 userScheme.pre('save', function(next) {

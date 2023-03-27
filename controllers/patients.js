@@ -59,6 +59,16 @@ module.exports = {
             resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
         }
     },
+    getPatientbyUser: async(req, resp) => {
+        const { id_user } = req.body;
+        try {
+            console.log("id_user: " + id_user);
+            const patients = await patientModel.find({ id_user: id_user });
+            resp.send(patients);
+        } catch (error) {
+            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+        }
+    },
     authenticatePatient: function(req, res) {
         const { cedula, password } = req.body;
         patientModel.findOne({ cedula: cedula }, function(err, user) {

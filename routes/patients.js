@@ -11,5 +11,6 @@ module.exports = (app) => {
     app.post("/updatePatient", withAuth, patientController.updatePatient);
     app.post("/deletePatient", withAuth, patientController.deletePatient);
     app.post("/getPatientbyId", patientController.getPatientbyId);
+    app.post("/getPatientbyUser", patientController.getPatientbyUser);
     app.post("/authenticatePatient", patientController.authenticatePatient);
 }

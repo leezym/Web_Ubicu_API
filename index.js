@@ -11,19 +11,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors({
-    //origin: '*',
     allowedOrigins: [
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:5001',
         'https://server.ubicu.co/',
-        'http://server.ubicu.co/'
+        'http://server.ubicu.co/',
+        'https://www.ubicu.co/',
+        'http://www.ubicu.co/'
     ],
     headers: [
         'X-HTTP-Method-Override', 'Content-Type', 'Accept', 'X-Access-Token', '*'
     ]
 }));
-
 
 app.use(cookieParser());
 

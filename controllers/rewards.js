@@ -26,9 +26,12 @@ module.exports = {
         try {
             const { _id } = req.body;
             const entrada = req.body;
-            const rewardUpdate = await rewardModel.findOneAndUpdate({ _id: _id }, entrada);
-            console.log("resp", rewardUpdate)
-            resp.send(rewardUpdate);
+            const rewardUpdate = await rewardModel.findByIdAndUpdate(_id, entrada, { new: true });
+            if (rewardUpdate) {
+                resp.send({ msg: 'Documento actualizado exitosamente' });
+            } else {
+                resp.status(404).send({ msg: 'Documento no encontrado' });
+            }
         } catch (error) {
             resp
                 .status(500)

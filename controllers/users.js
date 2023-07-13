@@ -53,6 +53,7 @@ module.exports = {
         const { cedula, password } = req.body;
         userModel.findOne({ cedula: cedula }, function(err, user) {
             console.log(userModel);
+            console.log(err);
             if (err) {
                 console.error(err);
                 res.status(500).json({

@@ -59,6 +59,16 @@ module.exports = {
             resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
         }
     },
+    getPatientbyCc: async(req, resp) => {
+        const { cedula } = req.body;
+        try {
+            console.log("cedula: " + cedula);
+            const patients = await patientModel.findOne({ cedula: cedula });
+            resp.send(patients);
+        } catch (error) {
+            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+        }
+    },
     getPatientbyUser: async(req, resp) => {
         const { id_user } = req.body;
         try {
@@ -74,7 +84,6 @@ module.exports = {
         patientModel.findOne({ cedula: cedula }, function(err, user) {
             console.log(patientModel);
             if (err) {
-                console.error('Error del servidor');
                 res.status(500).json('Error del servidor');
             } else if (!user) {
                 res.status(401).json('Usuario incorrecto');
@@ -82,7 +91,6 @@ module.exports = {
             } else {
                 user.isCorrectPassword(password, function(err, same) {
                     if (err) {
-                        console.error('Error del servidor');
                         res.status(500).json('Error del servidor');
                     } else if (!same) {
                         console.error('Contraseña incorrecta');

@@ -6,7 +6,7 @@ const customizationScheme = new mongo.Schema({
     id_item_figuras_array: { type: String },
     all_fondos_items_array: { type: String },
     all_figuras_items_array: { type: String },
-    id_patient: { type: String }
+    id_patient: { type: String, unique: true }
 });
 
 module.exports = mongo.model("Customizations", customizationScheme);

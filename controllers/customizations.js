@@ -4,7 +4,7 @@ module.exports = {
     allCustomizationsByPatient: async(req, resp) => {
         try {
             const { id_patient } = req.body;
-            const customization = await customizationModel.find({ id_patient: id_patient });
+            const customization = await customizationModel.findOne({ id_patient: id_patient });
 
             resp.send(customization);
         } catch (error) {
@@ -26,22 +26,12 @@ module.exports = {
         try {
             const { _id } = req.body;
             const entrada = req.body;
-            const customizationUpdate = await customizationModel.findOneAndUpdate({ _id: _id }, entrada);
-            console.log("resp", customizationUpdate)
-            resp.send(customizationUpdate);
-        } catch (error) {
-            resp
-                .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
-        }
-    },
-    deleteCustomizations: async(req, resp) => {
-        try {
-            const { id } = req.body;
-            const customizationDelete = await customizationModel.deleteOne({ _id: id }, (error) => {
-                console.log(error);
-            });
-            resp.send(customizationDelete);
+            const customizationUpdate = await customizationModel.findByIdAndUpdate(_id, entrada, { new: true });
+            if (customizationUpdate) {
+                resp.send({ msg: 'Documento actualizado exitosamente' });
+            } else {
+                resp.status(404).send({ msg: 'Documento no encontrado' });
+            }
         } catch (error) {
             resp
                 .status(500)

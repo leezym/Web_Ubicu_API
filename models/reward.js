@@ -9,7 +9,7 @@ const rewardScheme = new mongo.Schema({
     total_sessions: { type: Number },
     total_days: { type: Number },
     total_weeks: { type: Number },
-    id_patient: { type: String }
+    id_patient: { type: String, unique: true }
 });
 
 module.exports = mongo.model("Rewards", rewardScheme);

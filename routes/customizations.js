@@ -8,7 +8,6 @@ module.exports = (app) => {
     app.post("/allCustomizationsByPatient", customizationController.allCustomizationsByPatient);
     app.post("/createCustomizations", customizationController.createCustomizations);
     app.put("/updateCustomizations", customizationController.updateCustomizations);
-    app.post("/deleteCustomizations", customizationController.deleteCustomizations);
     app.post("/getCustomizationsbyId", customizationController.getCustomizationsbyId);
 
 

@@ -32,11 +32,14 @@ module.exports = {
     },
     updateEjercicio: async(req, resp) => {
         try {
-            const { id } = req.body;
+            const { _id } = req.body;
             const entrada = req.body;
-            const ejercicioUpdate = await ejercicioModel.findOneAndUpdate({ _id: id }, entrada);
-            console.log("resp", ejercicioUpdate)
-            resp.send(ejercicioUpdate);
+            const ejercicioUpdate = await ejercicioModel.findByIdAndUpdate(_id, entrada, { new: true });
+            if (ejercicioUpdate) {
+                resp.send({ msg: 'Documento actualizado exitosamente' });
+            } else {
+                resp.status(404).send({ msg: 'Documento no encontrado' });
+            }
         } catch (error) {
             resp
                 .status(500)

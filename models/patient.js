@@ -32,7 +32,7 @@ userScheme.pre('save', function(next) {
                     document.password = hashedPassword;
                     next();
                 }
-            });
+        });
     } else {
         next();
     }

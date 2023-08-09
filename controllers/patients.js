@@ -1,6 +1,7 @@
 const patientModel = require("../models/patient");
 const jwt = require('jsonwebtoken');
 const res = require("express/lib/response");
+const bcrypt = require('bcrypt');
 
 const secret = 'mysecretstotoken';
 
@@ -27,25 +28,40 @@ module.exports = {
         }
     },
     updatePatient: async(req, resp) => {
-        const { cedula } = req.body;
         try {
+            const { cedula, password } = req.body;
             const entrada = req.body;
-            const patientUpdate = await patientModel.findOneAndUpdate({ cedula: cedula }, entrada);
-            resp.send(patientUpdate);
+            const saltRounds = 10;
+
+            if (password) {
+                bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
+                    if (err) {
+                        resp.status(500).send({ msg: 'Error al encriptar la contraseña' });
+                    } else {
+                        try {
+                            entrada.password = hashedPassword;
+                            const patientUpdate = await patientModel.findOneAndUpdate({ cedula: cedula }, entrada, { new: true });
+                            if (patientUpdate) {
+                                resp.send({ msg: 'Documento actualizado exitosamente' });
+                            } else {
+                                resp.status(404).send({ msg: 'Documento no encontrado' });
+                            }
+    
+                        } catch (error) {
+                            resp
+                                .status(500)
+                                .send({ msg: "Error al actualizar el documento" });
+                        }
+                    }
+                });            
+            }
+            else{
+                resp.send({ msg: 'Contraseña vacía' });
+            }
+
         } catch (error) {
             resp
-                .sendStatus(500)
-                .send({ msg: "ocurrio un error en el servidor" });
-        }
-    },
-    deletePatient: async(req, resp) => {
-        const { cedula } = req.body;
-        try {
-            const patientDelete = await patientModel.deleteOne({ cedula: cedula });
-            resp.send(patientDelete);
-        } catch (error) {
-            resp
-                .sendStatus(500)
+                .status(500)
                 .send({ msg: "ocurrio un error en el servidor" });
         }
     },

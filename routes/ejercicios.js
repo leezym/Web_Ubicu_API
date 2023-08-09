@@ -7,11 +7,10 @@ module.exports = (app) => {
             resp.send("Servidor en expres y mongo");
         }),
         app.get("/allEjercicios", withAuth, ejercicioController.allEjercicios);
-    app.post("/allEjerciciosByPatient", ejercicioController.allEjerciciosByPatient);
-    app.post("/createEjercicio", ejercicioController.createEjercicio);
-    app.put("/updateEjercicio", ejercicioController.updateEjercicio);
-    app.post("/deleteEjercicio", ejercicioController.deleteEjercicio);
-    app.post("/getEjerciciobyId", ejercicioController.getEjerciciobyId);
+    app.post("/allEjerciciosByPatient", withAuth, ejercicioController.allEjerciciosByPatient);
+    app.post("/createEjercicio", withAuth, ejercicioController.createEjercicio);
+    app.put("/updateEjercicio", withAuth, ejercicioController.updateEjercicio);
+    app.post("/getEjerciciobyId", withAuth, ejercicioController.getEjerciciobyId);
 
 
 }

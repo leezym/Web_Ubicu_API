@@ -10,5 +10,4 @@ module.exports = (app) =>{
     app.post("/allResultsByUser",resultController.allResultsByUser);
     app.post("/allResultsByEjercicio", withAuth, resultController.allResultsByEjercicio);
     app.post("/createResult",resultController.createResult);
-    app.post("/updateResult",resultController.updateResult);
 }

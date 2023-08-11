@@ -1,6 +1,7 @@
 const userModel = require("../models/user");
 const jwt = require('jsonwebtoken');
 const res = require("express/lib/response");
+const bcrypt = require('bcrypt');
 
 const secret = 'mysecretstotoken';
 
@@ -27,25 +28,18 @@ module.exports = {
         }
     },
     updateUser: async(req, resp) => {
-        const { cedula } = req.body;
         try {
+            const { _id } = req.body;
             const entrada = req.body;
-            const userUpdate = await userModel.findOneAndUpdate({ cedula: cedula }, entrada);
-            resp.send(userUpdate);
+            const userUpdate = await userModel.findByIdAndUpdate(_id, entrada, { new: true });
+            if (userUpdate) {
+                resp.send({ msg: 'Documento actualizado exitosamente' });
+            } else {
+                resp.status(404).send({ msg: 'Documento no encontrado' });
+            }
         } catch (error) {
             resp
-                .sendStatus(500)
-                .send({ msg: "ocurrio un error en el servidor" });
-        }
-    },
-    deleteUser: async(req, resp) => {
-        const { cedula } = req.body;
-        try {
-            const userDelete = await userModel.deleteOne({ cedula: cedula });
-            resp.send(userDelete);
-        } catch (error) {
-            resp
-                .sendStatus(500)
+                .status(500)
                 .send({ msg: "ocurrio un error en el servidor" });
         }
     },
@@ -83,7 +77,6 @@ module.exports = {
                         const token = jwt.sign(payload, secret, {
                             expiresIn: '3h'
                         });
-                        console.log(token);
                         //res.cookie('token', token, { httpOnly: true }).sendStatus(200);
                         //res.send(user)
                         res.status(200).json({ token: token, user: user });
@@ -107,6 +100,42 @@ module.exports = {
             console.log(users[0]);
         } catch (error) {
             resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+        }
+    },
+    updatePassword: async (req, resp) => {
+        const { _id, password_actual, password, password_nueva, repeat_password_nueva } = req.body;
+        const saltRounds = 10;
+      
+        try {
+            const passwordMatches = await bcrypt.compare(password_actual, password);
+        
+            if (!passwordMatches) {
+                resp.send({ msg: 'La contraseña actual no es correcta' });
+            }
+        
+            if (password_nueva !== repeat_password_nueva) {
+                resp.send({ msg: 'Las nuevas contraseñas no coinciden' });
+            }
+      
+            bcrypt.hash(password_nueva, saltRounds, async (err, hashedPassword) => {
+                if (err) {
+                return resp.status(500).send({ msg: 'Error al encriptar la contraseña' });
+                }
+        
+                try {
+                    const userUpdate = await userModel.findByIdAndUpdate(_id, { password: hashedPassword }, { new: true });
+                
+                    if (userUpdate) {
+                        return resp.send({ msg: 'Documento actualizado exitosamente', password: hashedPassword });
+                    } else {
+                        return resp.status(404).send({ msg: 'Documento no encontrado' });                        
+                    }
+                } catch (error) {
+                return resp.status(500).send({ msg: 'Error al actualizar el documento' });
+                }
+            });
+        } catch (error) {
+          return resp.status(500).send({ msg: 'Ocurrió un error en el servidor' });
         }
     }
 }

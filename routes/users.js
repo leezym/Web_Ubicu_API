@@ -8,9 +8,9 @@ module.exports = (app) => {
         }),
         app.get("/allUsers", withAuth, userController.allUsers);
     app.post("/createUser", userController.createUser);
-    app.post("/updateUser", withAuth, userController.updateUser);
-    app.post("/deleteUser", withAuth, userController.deleteUser);
+    app.put("/updateUser", withAuth, userController.updateUser);
     app.post("/authenticateUser", userController.authenticateUser);
     app.get("/checkToken", withAuth, userController.checkToken);
     app.post("/getUserbyId", withAuth, userController.getUserbyId);
+    app.put("/updatePassword", withAuth, userController.updatePassword);
 }

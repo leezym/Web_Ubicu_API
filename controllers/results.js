@@ -77,30 +77,5 @@ module.exports = {
             .status(500)
             .send(error);
         }
-    },
-    updateResult:async (req,resp)=>{
-        try {
-            const {id} = req.body;
-            const entrada = req.body;
-            const resultUpdate = await resultModel.findOneAndUpdate({_id:id},entrada);
-            resp.send(resultUpdate);
-        } catch (error) {
-            resp
-            .status(500)
-            .send({msg:"ocurrio un error en el servidor"});
-        }
-    },
-    deleteResult:async (req,resp)=>{
-        try {
-            const {id} = req.body;
-            const resultDelete = await resultModel.deleteOne({_id:id},(error)=>{
-                console.log(error);
-            });
-            resp.send(resultDelete);
-        } catch (error) {
-            resp
-            .status(500)
-            .send({msg:"ocurrio un error en el servidor"});
-        }
     }
 }

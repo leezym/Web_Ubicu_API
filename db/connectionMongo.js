@@ -6,7 +6,8 @@ module.exports = {
     conectar: async(app) => {
         await mongoose.connect(uri, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            useFindAndModify: false
         }, (err) => {
             if (err)
                 console.log(err);

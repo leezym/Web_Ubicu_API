@@ -1,5 +1,5 @@
 const calibrationModel = require("../models/calibration");
-const ejercicioModel = require("../models/ejercicio");
+const https = require('https');
 
 module.exports = {
     allCalibrations: async (req,resp)=>{
@@ -36,17 +36,25 @@ module.exports = {
             .send({msg:"ocurrio un error en el servidor"});
         }
     },
-    verifyConnection: function(req, res) {        
-        fetch('https://server.ubicu.co/')
-        .then(response => {
-            if (response.status === 200) {
-                res.status(200).json('Conexión exitosa');
+    verifyConnection: (req, resp) => {
+        const serverUrl = 'https://server.ubicu.co';
+
+        const options = {
+            method: 'HEAD', // Realiza una solicitud HEAD para verificar la existencia del servidor
+        };
+
+        const request = https.request(serverUrl, options, (response) => {
+            if (response.statusCode === 200) {
+                resp.send({ message: 'Conexión exitosa' });
             } else {
-                res.status(500).json('Error del servidor');
+                resp.status(500).send('Fallo la conexión al servidor');
             }
-        })
-        .catch(error => {
-            res.status(500).json('Error del servidor');
         });
+
+        request.on('error', (error) => {
+            resp.status(500).send({ msg: 'No se pudo conectar al servidor' });
+        });
+
+        request.end();
     }
 }

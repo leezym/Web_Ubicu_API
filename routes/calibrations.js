@@ -9,5 +9,6 @@ module.exports = (app) =>{
     app.get("/allCalibrations",calibrationController.allCalibrations);
     app.post("/createCalibration",calibrationController.createCalibration);
     app.post("/deleteCalibration",calibrationController.deleteCalibration);
+    app.get("/verifyConnection",calibrationController.verifyConnection);
 
 }

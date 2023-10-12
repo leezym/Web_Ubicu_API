@@ -10,6 +10,7 @@ const withAuth = function(req, res, next) {
   if (!token) {
     res.status(401).send('Unauthorized: Falta No token');
   } else {
+    console.log(token);
     jwt.verify(token, secret, function(err, decoded) {
       if (err) {
         res.status(401).send('Unauthorized: Invalido token');

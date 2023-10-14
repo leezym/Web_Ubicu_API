@@ -31,6 +31,8 @@ const routeUsers = require("./routes/users")(app);
 const routePatients = require("./routes/patients")(app);
 const routeEjercicios = require("./routes/ejercicios")(app);
 const routeResults = require("./routes/results")(app);
+const routeRewards = require("./routes/rewards")(app);
+const routeCustomizations = require("./routes/customizations")(app);
 const routeCalibrations = require("./routes/calibrations")(app);
 
 const port = 5001;

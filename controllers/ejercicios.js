@@ -22,8 +22,8 @@ module.exports = {
     createEjercicio: async(req, resp) => {
         try {
             const ejercicio = req.body;
-            const user = await ejercicioModel.create(ejercicio);
-            resp.send(ejercicio);
+            const newEjercicio = await ejercicioModel.create(ejercicio);
+            resp.send(newEjercicio);
         } catch (error) {
             resp
                 .status(500)

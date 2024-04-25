@@ -15,11 +15,10 @@ module.exports = {
         }
     },
     createPatient: async(req, resp) => {
-        const usuario = req.body;
+        const patient = req.body;
         try {
-            const patient = await patientModel.create(usuario);
-            resp.send(patient);
-
+            const newPatient = await patientModel.create(patient);
+            resp.send(newPatient);
         } catch (error) {
             console.log(error);
             resp

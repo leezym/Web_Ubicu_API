@@ -15,11 +15,10 @@ module.exports = {
         }
     },
     createUser: async(req, resp) => {
-        const usuario = req.body;
+        const user = req.body;
         try {
-            const user = await userModel.create(usuario);
-            resp.send(user);
-
+            const newUser = await userModel.create(user);
+            resp.send(newUser);
         } catch (error) {
             console.log(error);
             resp

@@ -14,8 +14,8 @@ module.exports = {
     createCustomizations: async(req, resp) => {
         try {
             const customization = req.body;
-            const user = await customizationModel.create(customization);
-            resp.send(customization);
+            const newCustom = await customizationModel.create(customization);
+            resp.send(newCustom);
         } catch (error) {
             resp
                 .status(500)

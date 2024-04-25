@@ -12,10 +12,10 @@ module.exports = {
         }
     },
     createRewards: async(req, resp) => {
+        const reward = req.body;
         try {
-            const reward = req.body;
-            const user = await rewardModel.create(reward);
-            resp.send(reward);
+            const newReward = await rewardModel.create(reward);
+            resp.send(newReward);
         } catch (error) {
             resp
                 .status(500)

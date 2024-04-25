@@ -69,8 +69,8 @@ module.exports = {
     createResult:async (req,resp)=>{
         const result = req.body;
         try {
-            const resultado = await resultModel.create(result);
-            resp.send(resultado);
+            const newResult = await resultModel.create(result);
+            resp.send(newResult);
         } catch (error) {
             console.log(error)
             resp

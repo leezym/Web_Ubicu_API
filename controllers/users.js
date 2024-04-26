@@ -11,19 +11,23 @@ module.exports = {
             const users = await userModel.find();
             resp.send(users);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    createUser: async(req, resp) => {
+    createUser: async (req, resp) => {
         const user = req.body;
         try {
+            const existingUser = await userModel.findOne({ cedula: user.cedula });
+    
+            if (existingUser) {
+                return resp.status(400).json({ msg: 'El usuario ya existe' });
+            }
+    
             const newUser = await userModel.create(user);
             resp.send(newUser);
         } catch (error) {
             console.log(error);
-            resp
-                .sendStatus(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateUser: async(req, resp) => {
@@ -39,7 +43,7 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticateUser: function(req, res) {
@@ -98,7 +102,7 @@ module.exports = {
             resp.send(users[0]);
             console.log(users[0]);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updatePassword: async (req, resp) => {
@@ -125,7 +129,7 @@ module.exports = {
                     const userUpdate = await userModel.findByIdAndUpdate(_id, { password: hashedPassword }, { new: true });
                 
                     if (userUpdate) {
-                        return resp.send({ msg: 'Documento actualizado exitosamente', password: hashedPassword });
+                        return resp.send({ msg: 'Contraseña actualizada exitosamente', password: hashedPassword });
                     } else {
                         return resp.status(404).send({ msg: 'Documento no encontrado' });                        
                     }

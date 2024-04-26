@@ -7,7 +7,7 @@ module.exports = {
             const results = await resultModel.find();
             resp.send(results);
         } catch (error) {
-            resp.status(500).send({msg:"ocurrio un error en el servidor"});
+            resp.status(500).send({msg:"Ocurrió un error en el servidor"});
         }
     },
     allResultsByUser: async (req,resp)=>{
@@ -42,7 +42,7 @@ module.exports = {
             resp.send(results);
         } catch (error) {
             console.log(error);
-            resp.senStatus(500).send({msg:"ocurrio un error en el servidor"});
+            resp.senStatus(500).send({msg:"Ocurrió un error en el servidor"});
         }
     },
     allResultsByEjercicio: async (req,resp)=>{
@@ -63,7 +63,7 @@ module.exports = {
 
         } catch (error) {
             console.log(error);
-            resp.sendStatus(500).send({msg:"ocurrio un error en el servidor"});
+            resp.sendStatus(500).send({msg:"Ocurrió un error en el servidor"});
         }
     },
     createResult:async (req,resp)=>{

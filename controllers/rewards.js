@@ -8,7 +8,7 @@ module.exports = {
 
             resp.send(reward);
         } catch (error) {
-            resp.status(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createRewards: async(req, resp) => {
@@ -19,7 +19,7 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateRewards: async(req, resp) => {
@@ -35,7 +35,7 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     deleteRewards: async(req, resp) => {
@@ -48,7 +48,7 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getRewardsbyId: async(req, resp) => {
@@ -57,7 +57,7 @@ module.exports = {
             const reward = await rewardModel.findOne({ _id: id_reward });
             resp.send(reward);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

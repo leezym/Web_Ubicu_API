@@ -17,28 +17,6 @@ module.exports = {
             const ejercicio = await ejercicioModel.findOne({id_user:id}).exec();
             console.log(ejercicio);
             const results = await resultModel.find({id_ejercicio:ejercicio._id});
-            //agrego el nombre del jercicio anterior
-           
-            
-           /* ejercicios.forEach((element,key) => {
-                element.forEach((ele) => {
-                 console.log("element -> "+ ele);
-                /*if(element['type'] == "cicloActivo"){
-                    ejercicioModel.findOne({ element['id_user'] },function (err, ejercicioAnterior) {
-                    
-                    if (err) {
-                        console.error(err);
-                        res.status(500).json({
-                        error: 'Internal error please try again'
-                        }); 
-                    }else{
-                        element['anterior'] = ejercicioAnterior.nombre;
-                    }
-                });
-                } 
-                 });
-            });*/
-
             resp.send(results);
         } catch (error) {
             console.log(error);
@@ -52,7 +30,7 @@ module.exports = {
             console.log("fecha: ", fecha);
             console.log("hora: ", hora);
             const results = await resultModel.findOne({id_ejercicio:id_ejercicio, fecha:fecha, hora:hora});
-            //agrego el nombre del jercicio anterior
+            //agrego el nombre del ejercicio anterior
             console.log("results: ",results);
             if(results){
                 resp.send(results);

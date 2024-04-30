@@ -17,7 +17,7 @@ module.exports = {
     createPatient: async(req, resp) => {
         const patient = req.body;
         try {
-            const existingPatient = await userModel.findOne({ cedula: patient.cedula });
+            const existingPatient = await patientModel.findOne({ cedula: patient.cedula });
     
             if (existingPatient) {
                 return resp.status(400).json({ msg: 'El usuario ya existe' });

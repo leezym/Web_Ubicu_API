@@ -54,7 +54,7 @@ module.exports = {
             if (err) {
                 console.error(err);
                 res.status(500).json({
-                    error: 'Internal error please try again 1'
+                    error: 'Ocurrió un error en el servidor'
                 });
             } else if (!user) {
                 res.status(401).json({
@@ -65,7 +65,7 @@ module.exports = {
                 user.isCorrectPassword(password, function(err, same) {
                     if (err) {
                         res.status(500).json({
-                            error: 'Internal error please try again'
+                            error: 'Ocurrió un error en el servidor'
                         });
                     } else if (!same) {
                         res.status(401).json({

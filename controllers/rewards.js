@@ -37,27 +37,5 @@ module.exports = {
                 .status(500)
                 .send({ msg: "Ocurrió un error en el servidor" });
         }
-    },
-    deleteRewards: async(req, resp) => {
-        try {
-            const { id } = req.body;
-            const rewardDelete = await rewardModel.deleteOne({ _id: id }, (error) => {
-                console.log(error);
-            });
-            resp.send(rewardDelete);
-        } catch (error) {
-            resp
-                .status(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
-        }
-    },
-    getRewardsbyId: async(req, resp) => {
-        const { id_reward } = req.body;
-        try {
-            const reward = await rewardModel.findOne({ _id: id_reward });
-            resp.send(reward);
-        } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
-        }
     }
 }

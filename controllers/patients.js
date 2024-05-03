@@ -26,7 +26,6 @@ module.exports = {
             const newPatient = await patientModel.create(patient);
             resp.send(newPatient);
         } catch (error) {
-            console.log(error);
             resp
                 .sendStatus(500)
                 .send({ msg: "Ocurrió un error en el servidor" });
@@ -73,7 +72,6 @@ module.exports = {
     getPatientbyId: async(req, resp) => {
         const { id_patient } = req.body;
         try {
-            console.log("id_patient: " + id_patient);
             const patients = await patientModel.findOne({ _id: id_patient });
             resp.send(patients);
         } catch (error) {
@@ -83,7 +81,6 @@ module.exports = {
     getPatientbyCc: async(req, resp) => {
         const { cedula } = req.body;
         try {
-            console.log("cedula: " + cedula);
             const patients = await patientModel.findOne({ cedula: cedula });
             resp.send(patients);
         } catch (error) {
@@ -93,7 +90,6 @@ module.exports = {
     getPatientbyUser: async(req, resp) => {
         const { id_user } = req.body;
         try {
-            console.log("id_user: " + id_user);
             const patients = await patientModel.find({ id_user: id_user });
             resp.send(patients);
         } catch (error) {
@@ -103,7 +99,6 @@ module.exports = {
     authenticatePatient: function(req, res) {
         const { cedula, password } = req.body;
         patientModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(patientModel);
             if (err) {
                 res.status(500).json('Error del servidor');
             } else if (!user) {
@@ -117,9 +112,6 @@ module.exports = {
                         console.error('Contraseña incorrecta');
                         res.status(401).json('Contraseña incorrecta');
                     } else {
-                        console.log(cedula);
-                        console.log("Datos usuario:");
-                        console.log(user);
                         // Issue token
                         const payload = { cedula };
                         const token = jwt.sign(payload, secret, {

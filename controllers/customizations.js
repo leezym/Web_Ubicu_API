@@ -12,10 +12,11 @@ module.exports = {
         }
     },
     createCustomizations: async(req, resp) => {
+        const customization = req.body;
         try {
-            const customization = req.body;
             const newCustom = await customizationModel.create(customization);
             resp.send(newCustom);
+            console.log("creada custom")
         } catch (error) {
             resp
                 .status(500)
@@ -36,15 +37,6 @@ module.exports = {
             resp
                 .status(500)
                 .send({ msg: "Ocurrió un error en el servidor" });
-        }
-    },
-    getCustomizationsbyId: async(req, resp) => {
-        const { id_customization } = req.body;
-        try {
-            const customization = await customizationModel.findOne({ _id: id_customization });
-            resp.send(customization);
-        } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

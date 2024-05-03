@@ -7,7 +7,6 @@ module.exports = (app) =>{
         resp.send("Servidor en expres y mongo");
     }),
     app.get("/allResults", withAuth,resultController.allResults);
-    app.post("/allResultsByUser",resultController.allResultsByUser);
     app.post("/allResultsByEjercicio", withAuth, resultController.allResultsByEjercicio);
-    app.post("/createResult",resultController.createResult);
+    app.post("/createResult", withAuth, resultController.createResult);
 }

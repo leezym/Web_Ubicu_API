@@ -1,7 +1,6 @@
 const userController = require("../controllers/users");
 const withAuth = require('./middleware');
 
-
 module.exports = (app) => {
     app.get("/", (req, resp) => {
             resp.send("mi servidor en expres y mongo");

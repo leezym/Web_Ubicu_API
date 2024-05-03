@@ -46,19 +46,6 @@ module.exports = {
                 .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    deleteEjercicio: async(req, resp) => {
-        try {
-            const { id } = req.body;
-            const ejercicioDelete = await ejercicioModel.deleteOne({ _id: id }, (error) => {
-                console.log(error);
-            });
-            resp.send(ejercicioDelete);
-        } catch (error) {
-            resp
-                .status(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
-        }
-    },
     getEjerciciobyId: async(req, resp) => {
         const { id_ejercicio } = req.body;
         try {

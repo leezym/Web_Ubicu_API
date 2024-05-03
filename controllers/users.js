@@ -26,7 +26,6 @@ module.exports = {
             const newUser = await userModel.create(user);
             resp.send(newUser);
         } catch (error) {
-            console.log(error);
             resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
@@ -48,11 +47,9 @@ module.exports = {
     },
     authenticateUser: function(req, res) {
         const { cedula, password } = req.body;
-        userModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(userModel);
-            console.log(err);
+        userModel.findOne({ cedula: cedula }, function(err, user)
+        {
             if (err) {
-                console.error(err);
                 res.status(500).json({
                     error: 'Ocurrió un error en el servidor'
                 });
@@ -72,9 +69,6 @@ module.exports = {
                             error: 'Contraseña incorrecta'
                         });
                     } else {
-                        console.log(cedula);
-                        console.log("Datos usuario:");
-                        console.log(user);
                         // Issue token
                         const payload = { cedula };
                         const token = jwt.sign(payload, secret, {
@@ -97,10 +91,8 @@ module.exports = {
     getUserbyId: async(req, resp) => {
         const { id_user } = req.body;
         try {
-            console.log("id_user: " + id_user);
             const users = await userModel.find({ _id: id_user });
             resp.send(users[0]);
-            console.log(users[0]);
         } catch (error) {
             resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }

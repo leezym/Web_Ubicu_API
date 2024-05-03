@@ -7,10 +7,12 @@ const withAuth = function(req, res, next) {
     req.query.token ||
     req.headers['x-access-token'] ||
     req.cookies.token;
-  if (!token) {
+  if (!token)
+  {
     res.status(401).send('Unauthorized: Falta No token');
-  } else {
-    console.log(token);
+  }
+  else
+  {
     jwt.verify(token, secret, function(err, decoded) {
       if (err) {
         res.status(401).send('Unauthorized: Invalido token');

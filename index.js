@@ -11,7 +11,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors({
-    //origin: '*',
     allowedOrigins: [
         'http://localhost:3000',
         'http://localhost:3001',
@@ -33,7 +32,6 @@ const routeEjercicios = require("./routes/ejercicios")(app);
 const routeResults = require("./routes/results")(app);
 const routeRewards = require("./routes/rewards")(app);
 const routeCustomizations = require("./routes/customizations")(app);
-const routeCalibrations = require("./routes/calibrations")(app);
 
 const port = 5001;
 app.listen(port, () => { console.log(port) })

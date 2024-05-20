@@ -6,7 +6,7 @@ module.exports = {
             const ejercicios = await ejercicioModel.find();
             resp.send(ejercicios);
         } catch (error) {
-            resp.status(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     allEjerciciosByPatient: async(req, resp) => {
@@ -16,18 +16,18 @@ module.exports = {
 
             resp.send(ejercicios);
         } catch (error) {
-            resp.status(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createEjercicio: async(req, resp) => {
         try {
             const ejercicio = req.body;
-            const user = await ejercicioModel.create(ejercicio);
-            resp.send(ejercicio);
+            const newEjercicio = await ejercicioModel.create(ejercicio);
+            resp.send(newEjercicio);
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateEjercicio: async(req, resp) => {
@@ -43,20 +43,7 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
-        }
-    },
-    deleteEjercicio: async(req, resp) => {
-        try {
-            const { id } = req.body;
-            const ejercicioDelete = await ejercicioModel.deleteOne({ _id: id }, (error) => {
-                console.log(error);
-            });
-            resp.send(ejercicioDelete);
-        } catch (error) {
-            resp
-                .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getEjerciciobyId: async(req, resp) => {
@@ -65,7 +52,7 @@ module.exports = {
             const ejercicio = await ejercicioModel.find({ _id: id_ejercicio });
             resp.send(ejercicio[0]);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

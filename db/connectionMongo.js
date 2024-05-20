@@ -9,7 +9,7 @@ module.exports = {
             useUnifiedTopology: true
         }, (err) => {
             if (err)
-                console.log(err);
+                console.log("No hay conexión con mongodb. "+err);
             else
                 console.log("Conectamos mongodb");
         })

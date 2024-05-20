@@ -11,20 +11,22 @@ module.exports = {
             const users = await userModel.find();
             resp.send(users);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    createUser: async(req, resp) => {
-        const usuario = req.body;
+    createUser: async (req, resp) => {
+        const user = req.body;
         try {
-            const user = await userModel.create(usuario);
-            resp.send(user);
-
+            const existingUser = await userModel.findOne({ cedula: user.cedula });
+    
+            if (existingUser) {
+                return resp.status(400).json({ msg: 'El usuario ya existe' });
+            }
+    
+            const newUser = await userModel.create(user);
+            resp.send(newUser);
         } catch (error) {
-            console.log(error);
-            resp
-                .sendStatus(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateUser: async(req, resp) => {
@@ -40,18 +42,16 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticateUser: function(req, res) {
         const { cedula, password } = req.body;
-        userModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(userModel);
-            console.log(err);
+        userModel.findOne({ cedula: cedula }, function(err, user)
+        {
             if (err) {
-                console.error(err);
                 res.status(500).json({
-                    error: 'Internal error please try again 1'
+                    error: 'Ocurrió un error en el servidor'
                 });
             } else if (!user) {
                 res.status(401).json({
@@ -62,16 +62,13 @@ module.exports = {
                 user.isCorrectPassword(password, function(err, same) {
                     if (err) {
                         res.status(500).json({
-                            error: 'Internal error please try again'
+                            error: 'Ocurrió un error en el servidor'
                         });
                     } else if (!same) {
                         res.status(401).json({
                             error: 'Contraseña incorrecta'
                         });
                     } else {
-                        console.log(cedula);
-                        console.log("Datos usuario:");
-                        console.log(user);
                         // Issue token
                         const payload = { cedula };
                         const token = jwt.sign(payload, secret, {
@@ -94,12 +91,10 @@ module.exports = {
     getUserbyId: async(req, resp) => {
         const { id_user } = req.body;
         try {
-            console.log("id_user: " + id_user);
             const users = await userModel.find({ _id: id_user });
             resp.send(users[0]);
-            console.log(users[0]);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updatePassword: async (req, resp) => {
@@ -126,7 +121,7 @@ module.exports = {
                     const userUpdate = await userModel.findByIdAndUpdate(_id, { password: hashedPassword }, { new: true });
                 
                     if (userUpdate) {
-                        return resp.send({ msg: 'Documento actualizado exitosamente', password: hashedPassword });
+                        return resp.send({ msg: 'Contraseña actualizada exitosamente', password: hashedPassword });
                     } else {
                         return resp.status(404).send({ msg: 'Documento no encontrado' });                        
                     }

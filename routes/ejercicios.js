@@ -11,6 +11,4 @@ module.exports = (app) => {
     app.post("/createEjercicio", withAuth, ejercicioController.createEjercicio);
     app.put("/updateEjercicio", withAuth, ejercicioController.updateEjercicio);
     app.post("/getEjerciciobyId", withAuth, ejercicioController.getEjerciciobyId);
-
-
 }

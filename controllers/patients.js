@@ -11,20 +11,24 @@ module.exports = {
             const patients = await patientModel.find();
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createPatient: async(req, resp) => {
-        const usuario = req.body;
+        const patient = req.body;
         try {
-            const patient = await patientModel.create(usuario);
-            resp.send(patient);
+            const existingPatient = await patientModel.findOne({ cedula: patient.cedula });
+    
+            if (existingPatient) {
+                return resp.status(400).json({ msg: 'El usuario ya existe' });
+            }
 
+            const newPatient = await patientModel.create(patient);
+            resp.send(newPatient);
         } catch (error) {
-            console.log(error);
             resp
                 .sendStatus(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updatePatient: async(req, resp) => {
@@ -62,43 +66,39 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getPatientbyId: async(req, resp) => {
         const { id_patient } = req.body;
         try {
-            console.log("id_patient: " + id_patient);
             const patients = await patientModel.findOne({ _id: id_patient });
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getPatientbyCc: async(req, resp) => {
         const { cedula } = req.body;
         try {
-            console.log("cedula: " + cedula);
             const patients = await patientModel.findOne({ cedula: cedula });
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getPatientbyUser: async(req, resp) => {
         const { id_user } = req.body;
         try {
-            console.log("id_user: " + id_user);
             const patients = await patientModel.find({ id_user: id_user });
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticatePatient: function(req, res) {
         const { cedula, password } = req.body;
         patientModel.findOne({ cedula: cedula }, function(err, user) {
-            console.log(patientModel);
             if (err) {
                 res.status(500).json('Error del servidor');
             } else if (!user) {
@@ -112,9 +112,6 @@ module.exports = {
                         console.error('Contraseña incorrecta');
                         res.status(401).json('Contraseña incorrecta');
                     } else {
-                        console.log(cedula);
-                        console.log("Datos usuario:");
-                        console.log(user);
                         // Issue token
                         const payload = { cedula };
                         const token = jwt.sign(payload, secret, {

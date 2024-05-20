@@ -8,18 +8,19 @@ module.exports = {
 
             resp.send(customization);
         } catch (error) {
-            resp.status(500).send({ msg: "ocurrio un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createCustomizations: async(req, resp) => {
+        const customization = req.body;
         try {
-            const customization = req.body;
-            const user = await customizationModel.create(customization);
-            resp.send(customization);
+            const newCustom = await customizationModel.create(customization);
+            resp.send(newCustom);
+            console.log("creada custom")
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateCustomizations: async(req, resp) => {
@@ -35,16 +36,7 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .send({ msg: "ocurrio un error en el servidor" });
-        }
-    },
-    getCustomizationsbyId: async(req, resp) => {
-        const { id_customization } = req.body;
-        try {
-            const customization = await customizationModel.findOne({ _id: id_customization });
-            resp.send(customization);
-        } catch (error) {
-            resp.sendStatus(500).send({ msg: "ocurrio un error en el servidor" });
+                .send({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

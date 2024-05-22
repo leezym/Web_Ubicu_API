@@ -11,7 +11,7 @@ module.exports = {
             const users = await userModel.find();
             resp.send(users);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createUser: async (req, resp) => {
@@ -41,8 +41,7 @@ module.exports = {
             }
         } catch (error) {
             resp
-                .status(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
+                .status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticateUser: function(req, res) {
@@ -50,35 +49,23 @@ module.exports = {
         userModel.findOne({ cedula: cedula }, function(err, user)
         {
             if (err) {
-                res.status(500).json({
-                    error: 'Ocurrió un error en el servidor'
-                });
+                res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
             } else if (!user) {
-                res.status(401).json({
-                    error: 'Usuario incorrecto'
-                });
+                res.status(400).json({ msg: 'Usuario incorrecto' });
                 console.error(err);
             } else {
                 user.isCorrectPassword(password, function(err, same) {
                     if (err) {
-                        res.status(500).json({
-                            error: 'Ocurrió un error en el servidor'
-                        });
+                        res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
                     } else if (!same) {
-                        res.status(401).json({
-                            error: 'Contraseña incorrecta'
-                        });
+                        res.status(400).json({ msg: 'Contraseña incorrecta' });
                     } else {
                         // Issue token
                         const payload = { cedula };
                         const token = jwt.sign(payload, secret, {
                             expiresIn: '3h'
                         });
-                        //res.cookie('token', token, { httpOnly: true }).sendStatus(200);
-                        //res.send(user)
                         res.status(200).json({ token: token, user: user });
-                        //res.status(200).json({token:token});
-                        //res.sendStatus(200);
 
                     }
                 });
@@ -94,7 +81,7 @@ module.exports = {
             const users = await userModel.find({ _id: id_user });
             resp.send(users[0]);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updatePassword: async (req, resp) => {

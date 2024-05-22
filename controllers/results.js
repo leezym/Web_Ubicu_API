@@ -6,7 +6,7 @@ module.exports = {
             const results = await resultModel.find();
             resp.send(results);
         } catch (error) {
-            resp.status(500).send({msg:"Ocurrió un error en el servidor"});
+            resp.status(500).send({ msg:"Ocurrió un error en el servidor" });
         }
     },
     allResultsByEjercicio: async (req,resp)=>{
@@ -19,10 +19,10 @@ module.exports = {
                 resp.send(results);
             }
             else{
-                resp.send({msg: "No hay información", datos: ""})
+                resp.send({ msg: "No hay información", datos: "" })
             }
         } catch (error) {
-            resp.sendStatus(500).send({msg:"Ocurrió un error en el servidor"});
+            resp.sendStatus(500).json({ msg:"Ocurrió un error en el servidor" });
         }
     },
     createResult:async (req,resp)=>{

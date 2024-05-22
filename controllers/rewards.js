@@ -34,8 +34,7 @@ module.exports = {
             }
         } catch (error) {
             resp
-                .status(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
+                .status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

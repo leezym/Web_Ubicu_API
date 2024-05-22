@@ -11,7 +11,7 @@ module.exports = {
             const patients = await patientModel.find();
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createPatient: async(req, resp) => {
@@ -75,7 +75,7 @@ module.exports = {
             const patients = await patientModel.findOne({ _id: id_patient });
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getPatientbyCc: async(req, resp) => {
@@ -84,7 +84,7 @@ module.exports = {
             const patients = await patientModel.findOne({ cedula: cedula });
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getPatientbyUser: async(req, resp) => {
@@ -93,7 +93,7 @@ module.exports = {
             const patients = await patientModel.find({ id_user: id_user });
             resp.send(patients);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticatePatient: function(req, res) {

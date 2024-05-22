@@ -52,7 +52,7 @@ module.exports = {
             const ejercicio = await ejercicioModel.find({ _id: id_ejercicio });
             resp.send(ejercicio[0]);
         } catch (error) {
-            resp.sendStatus(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

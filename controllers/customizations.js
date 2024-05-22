@@ -19,8 +19,7 @@ module.exports = {
             console.log("creada custom")
         } catch (error) {
             resp
-                .status(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
+                .status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateCustomizations: async(req, resp) => {

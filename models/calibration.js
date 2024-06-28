@@ -1,10 +1,12 @@
 const mongo = require("mongoose");
 
-const calibrationScheme = new mongo.Schema({
-    fecha: { type: String},
-    hora: { type: Number },
-    minutos: { type: Number },
-    datos: { type: String }
+mongo.set('useCreateIndex', true);
+
+const calibrationSchema = new mongo.Schema({
+    fecha: { type: String, required: true },
+    hora: { type: Number, required: true },
+    minutos: { type: Number, required: true },
+    datos: { type: String, required: true }
 });
 
-module.exports = mongo.model("Calibration", calibrationScheme);
+module.exports = mongo.model("Calibration", calibrationSchema);

@@ -12,7 +12,6 @@ module.exports = {
     },
     createCalibration:async (req,resp)=>{
         const result = req.body;
-        console.log(result);
         try {
             const resultado = await calibrationModel.create(result);
             resp.send(resultado);

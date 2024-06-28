@@ -1,12 +1,16 @@
 const mongo = require("mongoose");
 
-const customizationScheme = new mongo.Schema({
-    id_customization: { type: Number },
-    id_item_fondos_array: { type: String },
-    id_item_figuras_array: { type: String },
-    all_fondos_items_array: { type: String },
-    all_figuras_items_array: { type: String },
-    id_patient: { type: String, unique: true }
+mongo.set('useCreateIndex', true);
+
+const customizationSchema = new mongo.Schema({
+    id_customization: { type: Number, required: true },
+    id_item_fondos_array: { type: String, required: true },
+    id_item_figuras_array: { type: String, required: true },
+    all_fondos_items_array: { type: String, required: true },
+    all_figuras_items_array: { type: String, required: true },
+    id_patient: { type: mongo.Schema.Types.ObjectId, ref: 'Patient', required: true, unique: true }
 });
 
-module.exports = mongo.model("Customizations", customizationScheme);
+customizationSchema.index({ id_patient: 1 });
+
+module.exports = mongo.model("Customizations", customizationSchema);

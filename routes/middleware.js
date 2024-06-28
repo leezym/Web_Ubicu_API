@@ -9,13 +9,13 @@ const withAuth = function(req, res, next) {
     req.cookies.token;
   if (!token)
   {
-    res.status(401).send('Unauthorized: Falta No token');
+    res.status(401).send('Unauthorized: No token');
   }
   else
   {
     jwt.verify(token, secret, function(err, decoded) {
       if (err) {
-        res.status(401).send('Unauthorized: Invalido token');
+        res.status(401).send('Unauthorized: Invalid token');
       } else {
         req.cedula = decoded.cedula;
         next();

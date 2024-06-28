@@ -6,14 +6,6 @@ const bcrypt = require('bcrypt');
 const secret = 'mysecretstotoken';
 
 module.exports = {
-    allUsers: async(req, resp) => {
-        try {
-            const users = await userModel.find();
-            resp.send(users);
-        } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
-        }
-    },
     createUser: async (req, resp) => {
         const user = req.body;
         try {
@@ -24,15 +16,15 @@ module.exports = {
             }
     
             const newUser = await userModel.create(user);
-            resp.send(newUser);
+            resp.status(201).send(newUser);
         } catch (error) {
             resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateUser: async(req, resp) => {
+        const { _id } = req.body;
+        const entrada = req.body;
         try {
-            const { _id } = req.body;
-            const entrada = req.body;
             const userUpdate = await userModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (userUpdate) {
                 resp.send({ msg: 'Documento actualizado exitosamente' });
@@ -40,37 +32,33 @@ module.exports = {
                 resp.status(404).send({ msg: 'Documento no encontrado' });
             }
         } catch (error) {
-            resp
-                .status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    authenticateUser: function(req, res) {
+    authenticateUser: async (req, res) => {
         const { cedula, password } = req.body;
-        userModel.findOne({ cedula: cedula }, function(err, user)
-        {
-            if (err) {
-                res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
-            } else if (!user) {
-                res.status(400).json({ msg: 'Usuario incorrecto' });
-                console.error(err);
-            } else {
-                user.isCorrectPassword(password, function(err, same) {
-                    if (err) {
-                        res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
-                    } else if (!same) {
-                        res.status(400).json({ msg: 'Contraseña incorrecta' });
-                    } else {
-                        // Issue token
-                        const payload = { cedula };
-                        const token = jwt.sign(payload, secret, {
-                            expiresIn: '3h'
-                        });
-                        res.status(200).json({ token: token, user: user });
-
-                    }
-                });
+        try {
+            const user = await userModel.findOne({ cedula: cedula });
+    
+            if (!user) {
+                return res.status(400).json({ msg: 'Usuario incorrecto' });
             }
-        });
+    
+            const same = await user.isCorrectPassword(password);
+    
+            if (!same) {
+                return res.status(400).json({ msg: 'Contraseña incorrecta' });
+            }
+    
+            const payload = { cedula };
+            const token = jwt.sign(payload, secret, {
+                expiresIn: '3h'
+            });
+    
+            res.status(200).json({ token: token, user: user });
+        } catch (err) {
+            res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+        }
     },
     checkToken: function(req, resp) {
         resp.sendStatus(200);
@@ -78,8 +66,8 @@ module.exports = {
     getUserbyId: async(req, resp) => {
         const { id_user } = req.body;
         try {
-            const users = await userModel.find({ _id: id_user });
-            resp.send(users[0]);
+            const users = await userModel.findById(id_user);
+            resp.send(users);
         } catch (error) {
             resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
@@ -120,4 +108,32 @@ module.exports = {
           return resp.status(500).send({ msg: 'Ocurrió un error en el servidor' });
         }
     }
+    /*updatePassword: async (req, resp) => {
+    const { _id, password_actual, password_nueva, repeat_password_nueva } = req.body;
+    const saltRounds = 10;
+
+    try {
+        const user = await userModel.findById(_id);
+        if (!user) {
+            return resp.status(404).json({ msg: 'Usuario no encontrado' });
+        }
+
+        const passwordMatches = await bcrypt.compare(password_actual, user.password);
+        if (!passwordMatches) {
+            return resp.status(400).json({ msg: 'La contraseña actual no es correcta' });
+        }
+
+        if (password_nueva !== repeat_password_nueva) {
+            return resp.status(400).json({ msg: 'Las nuevas contraseñas no coinciden' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password_nueva, saltRounds);
+        user.password = hashedPassword;
+        await user.save();
+
+        resp.status(200).json({ msg: 'Contraseña actualizada exitosamente' });
+    } catch (error) {
+        resp.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+    }
+}*/
 }

@@ -1,20 +1,13 @@
 const resultModel = require("../models/result");
+const mongo = require('mongoose');
 
 module.exports = {
-    allResults: async (req,resp)=>{
-        try {
-            const results = await resultModel.find();
-            resp.send(results);
-        } catch (error) {
-            resp.status(500).send({ msg:"Ocurrió un error en el servidor" });
-        }
-    },
     allResultsByEjercicio: async (req,resp)=>{
+        const {id_ejercicio, fecha, hora} = req.body;
+        const objectId = mongo.Types.ObjectId(id_ejercicio);
         try {
-            const {id_ejercicio, fecha, hora} = req.body;
-            const results = await resultModel.findOne({id_ejercicio:id_ejercicio, fecha:fecha, hora:hora});
+            const results = await resultModel.findOne({id_ejercicio: objectId, fecha: fecha, hora: hora});
 
-            //agrego el nombre del ejercicio anterior
             if(results){
                 resp.send(results);
             }
@@ -22,14 +15,14 @@ module.exports = {
                 resp.send({ msg: "No hay información", datos: "" })
             }
         } catch (error) {
-            resp.sendStatus(500).json({ msg:"Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg:"Ocurrió un error en el servidor" });
         }
     },
     createResult:async (req,resp)=>{
         const result = req.body;
         try {
             const newResult = await resultModel.create(result);
-            resp.send(newResult);
+            resp.status(201).send(newResult);
         } catch (error) {
             resp.status(500).send(error);
         }

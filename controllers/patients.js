@@ -2,18 +2,11 @@ const patientModel = require("../models/patient");
 const jwt = require('jsonwebtoken');
 const res = require("express/lib/response");
 const bcrypt = require('bcrypt');
+const mongo = require('mongoose');
 
 const secret = 'mysecretstotoken';
 
 module.exports = {
-    allPatients: async(req, resp) => {
-        try {
-            const patients = await patientModel.find();
-            resp.send(patients);
-        } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
-        }
-    },
     createPatient: async(req, resp) => {
         const patient = req.body;
         try {
@@ -24,18 +17,16 @@ module.exports = {
             }
 
             const newPatient = await patientModel.create(patient);
-            resp.send(newPatient);
+            resp.status(201).send(newPatient);
         } catch (error) {
-            resp
-                .sendStatus(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updatePatient: async(req, resp) => {
+        const { cedula, password } = req.body;
+        const entrada = req.body;
+        const saltRounds = 10;
         try {
-            const { cedula, password } = req.body;
-            const entrada = req.body;
-            const saltRounds = 10;
 
             if (password) {
                 bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
@@ -64,15 +55,13 @@ module.exports = {
             }
 
         } catch (error) {
-            resp
-                .status(500)
-                .send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     getPatientbyId: async(req, resp) => {
         const { id_patient } = req.body;
         try {
-            const patients = await patientModel.findOne({ _id: id_patient });
+            const patients = await patientModel.findById(id_patient);
             resp.send(patients);
         } catch (error) {
             resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
@@ -89,39 +78,33 @@ module.exports = {
     },
     getPatientbyUser: async(req, resp) => {
         const { id_user } = req.body;
+        const objectId = mongo.Types.ObjectId(id_user);
         try {
-            const patients = await patientModel.find({ id_user: id_user });
+            const patients = await patientModel.find({ id_user: objectId });
             resp.send(patients);
         } catch (error) {
             resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    authenticatePatient: function(req, res) {
+    authenticatePatient: async(req, res) => {
         const { cedula, password } = req.body;
-        patientModel.findOne({ cedula: cedula }, function(err, user) {
-            if (err) {
-                res.status(500).json('Error del servidor');
-            } else if (!user) {
-                res.status(401).json('Usuario incorrecto');
-                console.error('Usuario incorrecto');
-            } else {
-                user.isCorrectPassword(password, function(err, same) {
-                    if (err) {
-                        res.status(500).json('Error del servidor');
-                    } else if (!same) {
-                        console.error('Contraseña incorrecta');
-                        res.status(401).json('Contraseña incorrecta');
-                    } else {
-                        // Issue token
-                        const payload = { cedula };
-                        const token = jwt.sign(payload, secret, {
-                            expiresIn: '3h'
-                        });
-                        res.status(200).json({ token: token, user: user });
-
-                    }
-                });
+        try {
+            const user = await patientModel.findOne({ cedula: cedula });
+            if (!user) {
+                return res.status(401).json('Usuario incorrecto');
             }
-        });
-    }
+    
+            const same = await user.isCorrectPassword(password);
+            if (!same) {
+                return res.status(401).json('Contraseña incorrecta');
+            }
+    
+            // Issue token
+            const payload = { cedula };
+            const token = jwt.sign(payload, secret, { expiresIn: '3h' });
+            res.status(200).json({ token: token, user: user });
+        } catch (err) {
+            res.status(500).json('Error del servidor');
+        }
+    }    
 }

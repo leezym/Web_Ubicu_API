@@ -23,6 +23,7 @@
         "express-cors": "0.0.3",
         "jsonwebtoken": "^9.0.0",
         "mongoose": "^5.6.0",
-        "node-fetch": "^3.3.2"
+        "node-fetch": "^3.3.2",
+        "nodemailer": "^6.9.14"
     }
 }

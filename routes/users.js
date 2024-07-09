@@ -11,4 +11,6 @@ module.exports = (app) => {
     app.post("/createUser", userController.createUser);
     app.put("/updateUser", withAuth, userController.updateUser);
     app.put("/updatePassword", withAuth, userController.updatePassword);
+    app.post("/recoveryPassword", userController.recoveryPassword);
+    app.post("/restablishPassword", userController.restablishPassword);
 }

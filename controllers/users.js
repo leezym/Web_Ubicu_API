@@ -1,38 +1,38 @@
 const userModel = require("../models/user");
 const jwt = require('jsonwebtoken');
-const res = require("express/lib/response");
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 const secret = 'mysecretstotoken';
 
 module.exports = {
-    createUser: async (req, resp) => {
+    createUser: async (req, res) => {
         const user = req.body;
         try {
             const existingUser = await userModel.findOne({ cedula: user.cedula });
     
             if (existingUser) {
-                return resp.status(400).json({ msg: 'El usuario ya existe' });
+                return res.status(400).json({ msg: 'El usuario ya existe' });
             }
     
             const newUser = await userModel.create(user);
-            resp.status(201).send(newUser);
+            res.status(201).send(newUser);
         } catch (error) {
-            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    updateUser: async(req, resp) => {
+    updateUser: async(req, res) => {
         const { _id } = req.body;
         const entrada = req.body;
         try {
             const userUpdate = await userModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (userUpdate) {
-                resp.send({ msg: 'Documento actualizado exitosamente' });
+                res.send({ msg: 'Documento actualizado exitosamente' });
             } else {
-                resp.status(404).send({ msg: 'Documento no encontrado' });
+                res.status(404).send({ msg: 'Documento no encontrado' });
             }
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            res.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticateUser: async (req, res) => {
@@ -60,19 +60,19 @@ module.exports = {
             res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
         }
     },
-    checkToken: function(req, resp) {
-        resp.sendStatus(200);
+    checkToken: function(req, res) {
+        res.sendStatus(200);
     },
-    getUserbyId: async(req, resp) => {
+    getUserbyId: async(req, res) => {
         const { id_user } = req.body;
         try {
             const users = await userModel.findById(id_user);
-            resp.send(users);
+            res.send(users);
         } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    updatePassword: async (req, resp) => {
+    updatePassword: async (req, res) => {
         const { _id, password_actual, password, password_nueva, repeat_password_nueva } = req.body;
         const saltRounds = 10;
       
@@ -80,60 +80,108 @@ module.exports = {
             const passwordMatches = await bcrypt.compare(password_actual, password);
         
             if (!passwordMatches) {
-                resp.send({ msg: 'La contraseña actual no es correcta' });
+                res.send({ msg: 'La contraseña actual no es correcta' });
             }
         
             if (password_nueva !== repeat_password_nueva) {
-                resp.send({ msg: 'Las nuevas contraseñas no coinciden' });
+                res.send({ msg: 'Las nuevas contraseñas no coinciden' });
             }
       
             bcrypt.hash(password_nueva, saltRounds, async (err, hashedPassword) => {
                 if (err) {
-                return resp.status(500).send({ msg: 'Error al encriptar la contraseña' });
+                return res.status(500).send({ msg: 'Error al encriptar la contraseña' });
                 }
         
                 try {
                     const userUpdate = await userModel.findByIdAndUpdate(_id, { password: hashedPassword }, { new: true });
                 
                     if (userUpdate) {
-                        return resp.send({ msg: 'Contraseña actualizada exitosamente', password: hashedPassword });
+                        return res.send({ msg: 'Contraseña actualizada exitosamente', password: hashedPassword });
                     } else {
-                        return resp.status(404).send({ msg: 'Documento no encontrado' });                        
+                        return res.status(404).send({ msg: 'Documento no encontrado' });                        
                     }
                 } catch (error) {
-                return resp.status(500).send({ msg: 'Error al actualizar el documento' });
+                return res.status(500).send({ msg: 'Error al actualizar el documento' });
                 }
             });
         } catch (error) {
-          return resp.status(500).send({ msg: 'Ocurrió un error en el servidor' });
+          return res.status(500).send({ msg: 'Ocurrió un error en el servidor' });
+        }
+    },
+    recoveryPassword: async (req, res) => {
+        const { cedula } = req.body;
+        try {
+            const user = await userModel.findOne({ cedula: cedula });
+
+            if (!user) {
+                return res.status(404).json({ msg: 'Usuario no encontrado' });
+            }
+
+            // Generar token único para recuperación de contraseña
+            const token = jwt.sign(
+            { 
+                id: user._id, 
+                type: 'password_reset',
+                iat: Date.now()
+            }, 
+            secret, 
+            { expiresIn: '1h' }
+        );
+
+            // Configurar el transporte de correo
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'ubicu.sistema@gmail.com',
+                    pass: 'xetz iduj ijio mnct'
+                }
+            });
+
+            // Enviar el correo
+            let info = await transporter.sendMail({
+                from: '"UBICU: Fisioterapia Respiratoria" <ubicu.sistema@gmail.com>',
+                to: user.email,
+                subject: "Recuperación de contraseña",
+                text: `Para restablecer tu contraseña, haz clic en el siguiente enlace: 
+                       https://www.ubicu.co/#/RestablecerContrasena/${token}
+                       Este enlace expirará en 1 hora.`,
+                html: `<p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
+                       <a href="https://www.ubicu.co/#/RestablecerContrasena/${token}">Restablecer contraseña</a>
+                       <p>Este enlace expirará en 1 hora.</p>`
+            });
+
+            res.status(200).json({ msg: 'Se ha enviado un correo con instrucciones para recuperar tu contraseña.' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+        }
+    },
+    restablishPassword: async (req, res) => {
+        const { token, nuevaContrasena } = req.body;
+        try {
+            const decoded = jwt.verify(token, secret);
+            
+            // Verificar que es un token de restablecimiento de contraseña
+            if (decoded.type !== 'password_reset') {
+                return res.status(400).json({ msg: 'Token inválido' });
+            }
+    
+            const user = await userModel.findById(decoded.id);
+            if (!user) {
+                return res.status(400).json({ msg: 'Usuario no encontrado' });
+            }
+    
+            // Hashear la nueva contraseña
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(nuevaContrasena, salt);
+            await user.save();
+    
+            res.status(200).json({ msg: 'Contraseña actualizada exitosamente' });
+        } catch (err) {
+            if (err instanceof jwt.TokenExpiredError) {
+                return res.status(400).json({ msg: 'Token expirado' });
+            }
+            res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
         }
     }
-    /*updatePassword: async (req, resp) => {
-    const { _id, password_actual, password_nueva, repeat_password_nueva } = req.body;
-    const saltRounds = 10;
-
-    try {
-        const user = await userModel.findById(_id);
-        if (!user) {
-            return resp.status(404).json({ msg: 'Usuario no encontrado' });
-        }
-
-        const passwordMatches = await bcrypt.compare(password_actual, user.password);
-        if (!passwordMatches) {
-            return resp.status(400).json({ msg: 'La contraseña actual no es correcta' });
-        }
-
-        if (password_nueva !== repeat_password_nueva) {
-            return resp.status(400).json({ msg: 'Las nuevas contraseñas no coinciden' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password_nueva, saltRounds);
-        user.password = hashedPassword;
-        await user.save();
-
-        resp.status(200).json({ msg: 'Contraseña actualizada exitosamente' });
-    } catch (error) {
-        resp.status(500).json({ msg: 'Ocurrió un error en el servidor' });
-    }
-}*/
 }

@@ -147,7 +147,12 @@ module.exports = {
                        Este enlace expirará en 1 hora.`,
                 html: `<p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
                        <a href="https://www.ubicu.co/#/RestablecerContrasena/${token}">Restablecer contraseña</a>
-                       <p>Este enlace expirará en 1 hora.</p>`
+                       <p>Este enlace expirará en 1 hora.</p>`,
+                headers: {
+                    'X-Priority': '1',
+                    'X-MSMail-Priority': 'High',
+                    'Importance': 'high'
+                }
             });
 
             res.status(200).json({ msg: 'Se ha enviado un correo con instrucciones para recuperar tu contraseña.' });

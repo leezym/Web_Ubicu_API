@@ -5,45 +5,51 @@ const bcrypt = require('bcrypt');
 const mongo = require('mongoose');
 
 const secret = 'mysecretstotoken';
+const saltRounds = 10;
 
 module.exports = {
-    createPatient: async(req, resp) => {
+    createPatient: async (req, res) => {
         const patient = req.body;
         try {
             const existingPatient = await patientModel.findOne({ cedula: patient.cedula });
     
             if (existingPatient) {
-                return resp.status(400).json({ msg: 'El usuario ya existe' });
+                return res.status(400).json({ msg: 'El usuario ya existe' });
             }
-
-            const newPatient = await patientModel.create(patient);
-            resp.status(201).send(newPatient);
+    
+            try {
+                const hashedPassword = await bcrypt.hash(patient.password, saltRounds);
+                patient.password = hashedPassword;
+                const newPatient = await patientModel.create(patient);
+                res.status(201).json(newPatient);
+            } catch (hashError) {
+                res.status(500).json({ msg: 'Error al encriptar la contraseña' });
+            }            
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            res.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    updatePatient: async(req, resp) => {
+    updatePatient: async(req, res) => {
         const { cedula, password } = req.body;
         const entrada = req.body;
-        const saltRounds = 10;
         try {
 
             if (password) {
                 bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
                     if (err) {
-                        resp.status(500).send({ msg: 'Error al encriptar la contraseña' });
+                        res.status(500).send({ msg: 'Error al encriptar la contraseña' });
                     } else {
                         try {
                             entrada.password = hashedPassword;
                             const patientUpdate = await patientModel.findOneAndUpdate({ cedula: cedula }, entrada, { new: true });
                             if (patientUpdate) {
-                                resp.send({ msg: 'Documento actualizado exitosamente' });
+                                res.send({ msg: 'Documento actualizado exitosamente' });
                             } else {
-                                resp.status(404).send({ msg: 'Documento no encontrado' });
+                                res.status(404).send({ msg: 'Documento no encontrado' });
                             }
     
                         } catch (error) {
-                            resp
+                            res
                                 .status(500)
                                 .send({ msg: "Error al actualizar el documento" });
                         }
@@ -51,39 +57,39 @@ module.exports = {
                 });            
             }
             else{
-                resp.send({ msg: 'Contraseña vacía' });
+                res.send({ msg: 'Contraseña vacía' });
             }
 
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            res.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    getPatientbyId: async(req, resp) => {
+    getPatientbyId: async(req, res) => {
         const { id_patient } = req.body;
         try {
             const patients = await patientModel.findById(id_patient);
-            resp.send(patients);
+            res.send(patients);
         } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    getPatientbyCc: async(req, resp) => {
+    getPatientbyCc: async(req, res) => {
         const { cedula } = req.body;
         try {
             const patients = await patientModel.findOne({ cedula: cedula });
-            resp.send(patients);
+            res.send(patients);
         } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
-    getPatientbyUser: async(req, resp) => {
+    getPatientbyUser: async(req, res) => {
         const { id_user } = req.body;
         const objectId = mongo.Types.ObjectId(id_user);
         try {
             const patients = await patientModel.find({ id_user: objectId });
-            resp.send(patients);
+            res.send(patients);
         } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     authenticatePatient: async(req, res) => {

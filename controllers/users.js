@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
 const secret = 'mysecretstotoken';
+const saltRounds = 10;
 
 module.exports = {
     createUser: async (req, res) => {
@@ -14,9 +15,15 @@ module.exports = {
             if (existingUser) {
                 return res.status(400).json({ msg: 'El usuario ya existe' });
             }
-    
-            const newUser = await userModel.create(user);
-            res.status(201).send(newUser);
+
+            try {
+                const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+                user.password = hashedPassword;
+                const newUser = await userModel.create(user);
+                res.status(201).json(newUser);
+            } catch (hashError) {
+                res.status(500).json({ msg: 'Error al encriptar la contraseña' });
+            }
         } catch (error) {
             res.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
@@ -74,7 +81,6 @@ module.exports = {
     },
     updatePassword: async (req, res) => {
         const { _id, password_actual, password, password_nueva, repeat_password_nueva } = req.body;
-        const saltRounds = 10;
       
         try {
             const passwordMatches = await bcrypt.compare(password_actual, password);

@@ -7,7 +7,7 @@ module.exports = {
             const results = await calibrationModel.find();
             resp.send(results);
         } catch (error) {
-            resp.status(500).send({msg:"ocurrio un error en el servidor"});
+            resp.status(500).send({msg:"Ocurrió un error en el servidor. Por favor intente más tarde."});
         }
     },
     createCalibration:async (req,resp)=>{
@@ -32,7 +32,7 @@ module.exports = {
         } catch (error) {
             resp
             .status(500)
-            .send({msg:"ocurrio un error en el servidor"});
+            .send({msg:"Ocurrió un error en el servidor. Por favor intente más tarde."});
         }
     },
     verifyConnection: (req, resp) => {
@@ -44,14 +44,14 @@ module.exports = {
 
         const request = https.request(serverUrl, options, (response) => {
             if (response.statusCode === 200) {
-                resp.send({ message: 'Conexión exitosa' });
+                resp.send({ message: 'Conexión exitosa.' });
             } else {
-                resp.status(500).send('Fallo la conexión al servidor');
+                resp.status(500).send('Fallo la conexión al servidor.');
             }
         });
 
         request.on('error', (error) => {
-            resp.status(500).send({ msg: 'No se pudo conectar al servidor' });
+            resp.status(500).send({ msg: 'No se pudo conectar al servidor.' });
         });
 
         request.end();

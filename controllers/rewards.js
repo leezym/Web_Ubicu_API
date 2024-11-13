@@ -10,7 +10,7 @@ module.exports = {
 
             resp.send(reward);
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     createRewards: async(req, resp) => {
@@ -19,7 +19,7 @@ module.exports = {
             const newReward = await rewardModel.create(reward);
             resp.status(201).send(newReward);
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updateRewards: async(req, resp) => {
@@ -28,12 +28,12 @@ module.exports = {
         try {
             const rewardUpdate = await rewardModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (rewardUpdate) {
-                resp.send({ msg: 'Documento actualizado exitosamente' });
+                resp.send({ msg: 'Documento actualizado exitosamente.' });
             } else {
-                resp.status(404).send({ msg: 'Documento no encontrado' });
+                resp.status(404).send({ msg: 'Documento no encontrado.' });
             }
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     }
 }

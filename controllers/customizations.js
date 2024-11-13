@@ -10,7 +10,7 @@ module.exports = {
 
             resp.send(customization);
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     createCustomizations: async(req, resp) => {
@@ -19,7 +19,7 @@ module.exports = {
             const newCustom = await customizationModel.create(customization);
             resp.status(201).send(newCustom);
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updateCustomizations: async(req, resp) => {
@@ -28,12 +28,12 @@ module.exports = {
         try {
             const customizationUpdate = await customizationModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (customizationUpdate) {
-                resp.send({ msg: 'Documento actualizado exitosamente' });
+                resp.send({ msg: 'Documento actualizado exitosamente.' });
             } else {
-                resp.status(404).send({ msg: 'Documento no encontrado' });
+                resp.status(404).send({ msg: 'Documento no encontrado.' });
             }
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).send({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     }
 }

@@ -24,7 +24,11 @@ app.use(cors({
 }));
 
 
-app.use(cookieParser());
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json('¡Algo falló!');
+});
+
 
 const routeUsers = require("./routes/users")(app);
 const routePatients = require("./routes/patients")(app);

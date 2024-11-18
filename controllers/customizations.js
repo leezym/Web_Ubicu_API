@@ -8,18 +8,18 @@ module.exports = {
         try {
             const customization = await customizationModel.findOne({ id_patient: objectId });
 
-            resp.send(customization);
+            resp.json(customization);
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     createCustomizations: async(req, resp) => {
         const customization = req.body;
         try {
             const newCustom = await customizationModel.create(customization);
-            resp.status(201).send(newCustom);
+            resp.status(200).json(newCustom);
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     },
     updateCustomizations: async(req, resp) => {
@@ -28,12 +28,12 @@ module.exports = {
         try {
             const customizationUpdate = await customizationModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (customizationUpdate) {
-                resp.send({ msg: 'Documento actualizado exitosamente' });
+                resp.json({ msg: 'Documento actualizado exitosamente' });
             } else {
-                resp.status(404).send({ msg: 'Documento no encontrado' });
+                resp.status(404).json({ msg: 'Documento no encontrado' });
             }
         } catch (error) {
-            resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

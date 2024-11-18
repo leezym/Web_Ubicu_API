@@ -9,10 +9,10 @@ module.exports = {
             const results = await resultModel.findOne({id_ejercicio: objectId, fecha: fecha, hora: hora});
 
             if(results){
-                resp.send(results);
+                resp.json(results);
             }
             else{
-                resp.send({ msg: "No hay información", datos: "" })
+                resp.json({ msg: "No hay información", datos: "" })
             }
         } catch (error) {
             resp.status(500).json({ msg:"Ocurrió un error en el servidor" });
@@ -22,9 +22,9 @@ module.exports = {
         const result = req.body;
         try {
             const newResult = await resultModel.create(result);
-            resp.status(201).send(newResult);
+            resp.status(200).json(newResult);
         } catch (error) {
-            resp.status(500).send(error);
+            resp.status(500).json(error);
         }
     }
 }

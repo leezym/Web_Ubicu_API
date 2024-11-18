@@ -4,18 +4,19 @@ mongoose.Promise = global.Promise;
 
 module.exports = {
     conectar: async(app) => {
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }, (err) => {
-            if (err)
-                console.log("No hay conexión con mongodb. "+err);
-            else
-                console.log("Conectamos mongodb");
-        })
-
-        app.listen(5000, () => {
-            console.log("Server está en el puerto 5000");
-        })
+        try {
+            await mongoose.connect(uri, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+            console.log("Conectamos mongodb");
+            
+            app.listen(5000, () => {
+                console.log("Server está en el puerto 5000");
+            });
+        } catch (err) {
+            console.error("No hay conexión con mongodb. " + err);
+            process.exit(1);
+        }
     }
 }

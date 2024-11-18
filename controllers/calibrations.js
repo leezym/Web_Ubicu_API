@@ -5,21 +5,21 @@ module.exports = {
     allCalibrations: async (req,resp)=>{
         try {
             const results = await calibrationModel.find();
-            resp.send(results);
+            resp.json(results);
         } catch (error) {
-            resp.status(500).send({msg:"ocurrio un error en el servidor"});
+            resp.status(500).json({msg:"ocurrio un error en el servidor"});
         }
     },
     createCalibration:async (req,resp)=>{
         const result = req.body;
         try {
             const resultado = await calibrationModel.create(result);
-            resp.send(resultado);
+            resp.json(resultado);
         } catch (error) {
             console.log(error)
             resp
             .status(500)
-            .send(error);
+            .json(error);
         }
     },
     deleteCalibration:async (req,resp)=>{
@@ -28,11 +28,11 @@ module.exports = {
             const resultDelete = await calibrationModel.deleteOne({_id:id},(error)=>{
                 console.log(error);
             });
-            resp.send(resultDelete);
+            resp.json(resultDelete);
         } catch (error) {
             resp
             .status(500)
-            .send({msg:"ocurrio un error en el servidor"});
+            .json({msg:"ocurrio un error en el servidor"});
         }
     },
     verifyConnection: (req, resp) => {
@@ -44,14 +44,14 @@ module.exports = {
 
         const request = https.request(serverUrl, options, (response) => {
             if (response.statusCode === 200) {
-                resp.send({ message: 'Conexión exitosa' });
+                resp.json({ message: 'Conexión exitosa' });
             } else {
-                resp.status(500).send('Fallo la conexión al servidor');
+                resp.status(500).json('Fallo la conexión al servidor');
             }
         });
 
         request.on('error', (error) => {
-            resp.status(500).send({ msg: 'No se pudo conectar al servidor' });
+            resp.status(500).json({ msg: 'No se pudo conectar al servidor' });
         });
 
         request.end();

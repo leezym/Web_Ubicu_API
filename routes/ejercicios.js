@@ -4,7 +4,7 @@ const withAuth = require('./middleware');
 
 module.exports = (app) => {
     app.get("/", (req, resp) => {
-        resp.send("Servidor en expres y mongo");
+        resp.json("Servidor en expres y mongo");
     }),
     app.post("/allEjerciciosByPatient", withAuth, ejercicioController.allEjerciciosByPatient);
     app.post("/getEjerciciobyId", withAuth, ejercicioController.getEjerciciobyId);

@@ -10,7 +10,7 @@ module.exports = {
 
             resp.json(customization);
         } catch (error) {
-            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     createCustomizations: async(req, resp) => {
@@ -19,21 +19,22 @@ module.exports = {
             const newCustom = await customizationModel.create(customization);
             resp.status(200).json(newCustom);
         } catch (error) {
-            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updateCustomizations: async(req, resp) => {
         const { _id } = req.body;
-        const entrada = req.body;
+        const entrada = { ...req.body };
+        
         try {
             const customizationUpdate = await customizationModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (customizationUpdate) {
-                resp.json({ msg: 'Documento actualizado exitosamente' });
+                resp.json({ msg: 'Documento actualizado exitosamente.' });
             } else {
-                resp.status(404).json({ msg: 'Documento no encontrado' });
+                resp.status(404).json({ msg: 'Documento no encontrado.' });
             }
         } catch (error) {
-            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     }
 }

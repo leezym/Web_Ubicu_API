@@ -10,7 +10,7 @@ module.exports = {
             
             resp.json(ejercicios);
         } catch (error) {
-            resp.status(500).json({ msg: "Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     createEjercicio: async(req, resp) => {
@@ -21,23 +21,24 @@ module.exports = {
         } catch (error) {
             resp
                 .status(500)
-                .json({ msg: "Ocurrió un error en el servidor" });
+                .json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updateEjercicio: async(req, resp) => {
         const { _id } = req.body;
-        const entrada = req.body;
+        const entrada = {... req.body};
+        
         try {
             const ejercicioUpdate = await ejercicioModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (ejercicioUpdate) {
-                resp.json({ msg: 'Documento actualizado exitosamente' });
+                resp.json({ msg: 'Documento actualizado exitosamente.' });
             } else {
-                resp.status(404).json({ msg: 'Documento no encontrado' });
+                resp.status(404).json({ msg: 'Documento no encontrado.' });
             }
         } catch (error) {
             resp
                 .status(500)
-                .json({ msg: "Ocurrió un error en el servidor" });
+                .json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     getEjerciciobyId: async(req, resp) => {
@@ -46,7 +47,7 @@ module.exports = {
             const ejercicio = await ejercicioModel.findById(id_ejercicio);
             resp.json(ejercicio);
         } catch (error) {
-            resp.jsonStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+            resp.jsonStatus(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     }
 }

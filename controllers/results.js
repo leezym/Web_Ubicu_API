@@ -15,7 +15,7 @@ module.exports = {
                 resp.json({ msg: "No hay información", datos: "" })
             }
         } catch (error) {
-            resp.status(500).json({ msg:"Ocurrió un error en el servidor" });
+            resp.status(500).json({ msg:"Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     createResult:async (req,resp)=>{

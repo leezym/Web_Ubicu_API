@@ -13,7 +13,7 @@ module.exports = {
             const existingUser = await userModel.findOne({ cedula: user.cedula });
     
             if (existingUser) {
-                return res.status(400).json({ msg: 'El usuario ya existe' });
+                return res.status(400).json({ msg: 'La cédula ya está registrada.' });
             }
 
             try {
@@ -22,16 +22,22 @@ module.exports = {
                 const newUser = await userModel.create(user);
                 res.status(201).json(newUser);
             } catch (hashError) {
-                res.status(500).json({ msg: 'Error al encriptar la contraseña' });
+                res.status(500).json({ msg: 'Error al encriptar la contraseña.' });
             }
         } catch (error) {
-            res.status(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updateUser: async(req, res) => {
-        const { _id } = req.body;
-        const entrada = req.body;
+        const { _id, cedula } = req.body;
+        const entrada = { ...req.body };
+
         try {
+            const existingUser = await userModel.findOne({ cedula, _id: { $ne: _id } });
+            if (existingUser) {
+                return res.status(400).json({ msg: 'La cédula ya está registrada en otro usuario. No se puede modificar.' });
+            }
+
             const userUpdate = await userModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (userUpdate) {
                 res.json({ msg: 'Documento actualizado exitosamente' });
@@ -48,13 +54,13 @@ module.exports = {
             const user = await userModel.findOne({ cedula: cedula });
     
             if (!user) {
-                return res.status(400).json({ msg: 'Usuario incorrecto' });
+                return res.status(400).json({ msg: 'Usuario incorrecto.' });
             }
     
             const same = await user.isCorrectPassword(password);
     
             if (!same) {
-                return res.status(400).json({ msg: 'Contraseña incorrecta' });
+                return res.status(400).json({ msg: 'Contraseña incorrecta.' });
             }
     
             const payload = { cedula };
@@ -64,7 +70,7 @@ module.exports = {
     
             res.status(200).json({ token: token, user: user });
         } catch (err) {
-            res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+            res.status(500).json({ msg: 'Ocurrió un error en el servidor. Por favor intente más tarde..' });
         }
     },
     checkToken: function(req, res) {
@@ -76,7 +82,7 @@ module.exports = {
             const users = await userModel.findById(id_user);
             res.json(users);
         } catch (error) {
-            res.jsonStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+            res.jsonStatus(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updatePassword: async (req, res) => {
@@ -86,16 +92,16 @@ module.exports = {
             const passwordMatches = await bcrypt.compare(password_actual, password);
         
             if (!passwordMatches) {
-                res.json({ msg: 'La contraseña actual no es correcta' });
+                res.json({ msg: 'La contraseña actual no es correcta.' });
             }
         
             if (password_nueva !== repeat_password_nueva) {
-                res.json({ msg: 'Las nuevas contraseñas no coinciden' });
+                res.json({ msg: 'Las nuevas contraseñas no coinciden.' });
             }
       
             bcrypt.hash(password_nueva, saltRounds, async (err, hashedPassword) => {
                 if (err) {
-                return res.status(500).json({ msg: 'Error al encriptar la contraseña' });
+                return res.status(500).json({ msg: 'Error al encriptar la contraseña.' });
                 }
         
                 try {
@@ -104,14 +110,14 @@ module.exports = {
                     if (userUpdate) {
                         return res.json({ msg: 'Contraseña actualizada exitosamente', password: hashedPassword });
                     } else {
-                        return res.status(404).json({ msg: 'Documento no encontrado' });                        
+                        return res.status(404).json({ msg: 'Documento no encontrado.' });                        
                     }
                 } catch (error) {
-                return res.status(500).json({ msg: 'Error al actualizar el documento' });
+                return res.status(500).json({ msg: 'Error al actualizar el documento.' });
                 }
             });
         } catch (error) {
-          return res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+          return res.status(500).json({ msg: 'Ocurrió un error en el servidor. Por favor intente más tarde..' });
         }
     },
     recoveryPassword: async (req, res) => {
@@ -120,7 +126,7 @@ module.exports = {
             const user = await userModel.findOne({ cedula: cedula });
 
             if (!user) {
-                return res.status(404).json({ msg: 'Usuario no encontrado' });
+                return res.status(404).json({ msg: 'Usuario no encontrado.' });
             }
 
             // Generar token único para recuperación de contraseña
@@ -164,7 +170,7 @@ module.exports = {
             res.status(200).json({ msg: 'Se ha enviado un correo con instrucciones para recuperar tu contraseña.' });
         } catch (err) {
             console.error(err);
-            res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+            res.status(500).json({ msg: 'Ocurrió un error en el servidor. Por favor intente más tarde.' });
         }
     },
     restablishPassword: async (req, res) => {
@@ -174,12 +180,12 @@ module.exports = {
             
             // Verificar que es un token de restablecimiento de contraseña
             if (decoded.type !== 'password_reset') {
-                return res.status(400).json({ msg: 'Token inválido' });
+                return res.status(400).json({ msg: 'Token inválido.' });
             }
     
             const user = await userModel.findById(decoded.id);
             if (!user) {
-                return res.status(400).json({ msg: 'Usuario no encontrado' });
+                return res.status(400).json({ msg: 'Usuario no encontrado.' });
             }
     
             // Hashear la nueva contraseña
@@ -187,12 +193,12 @@ module.exports = {
             user.password = await bcrypt.hash(nuevaContrasena, salt);
             await user.save();
     
-            res.status(200).json({ msg: 'Contraseña actualizada exitosamente' });
+            res.status(200).json({ msg: 'Contraseña actualizada exitosamente.' });
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError) {
-                return res.status(400).json({ msg: 'Token expirado' });
+                return res.status(400).json({ msg: 'Token expirado.' });
             }
-            res.status(500).json({ msg: 'Ocurrió un error en el servidor' });
+            res.status(500).json({ msg: 'Ocurrió un error en el servidor. Por favor intente más tarde.' });
         }
     }
 }

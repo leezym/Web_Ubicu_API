@@ -30,7 +30,7 @@ module.exports = {
         }
     },
     updatePatient: async (req, res) => {
-        const { cedula, password } = req.body;
+        const { _id, cedula, password } = req.body;
         const entrada = { ...req.body };
     
         try {
@@ -48,7 +48,7 @@ module.exports = {
                 }
             }
     
-            const patientUpdate = await patientModel.findOneAndUpdate({ cedula: cedula }, entrada, { new: true });
+            const patientUpdate = await patientModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (patientUpdate) {
                 res.json({ msg: 'Documento actualizado exitosamente.' });
             } else {
@@ -104,7 +104,7 @@ module.exports = {
             const token = jwt.sign(payload, secret, { expiresIn: '3h'});
             res.status(200).json({ token: token, user: user });
         } catch (err) {
-            res.status(500).json('Error del servidor');
+            res.status(500).json('Ocurrió un error en el servidor. Por favor intente más tarde.');
         }
     }    
 }

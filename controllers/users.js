@@ -54,13 +54,13 @@ module.exports = {
             const user = await userModel.findOne({ cedula: cedula });
     
             if (!user) {
-                return res.status(400).json({ msg: 'Usuario incorrecto.' });
+                return res.status(401).json({ msg: 'Usuario incorrecto.' });
             }
     
             const same = await user.isCorrectPassword(password);
     
             if (!same) {
-                return res.status(400).json({ msg: 'Contraseña incorrecta.' });
+                return res.status(401).json({ msg: 'Contraseña incorrecta.' });
             }
     
             const payload = { cedula };

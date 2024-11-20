@@ -12,7 +12,7 @@ module.exports = {
         try {
             const reward = await rewardModel.findOne({ id_patient: objectId });
 
-            resp.json(reward);
+            resp.status(200).json(reward);
         } catch (error) {
             resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
@@ -33,7 +33,7 @@ module.exports = {
         try {
             const rewardUpdate = await rewardModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (rewardUpdate) {
-                resp.json({ msg: 'Documento actualizado exitosamente.' });
+                resp.status(200).json({ msg: 'Documento actualizado exitosamente.' });
             } else {
                 resp.status(404).json({ msg: 'Documento no encontrado.' });
             }

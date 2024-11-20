@@ -5,7 +5,7 @@ module.exports = {
     allCalibrations: async (req,resp)=>{
         try {
             const results = await calibrationModel.find();
-            resp.json(results);
+            resp.status(200).json(results);
         } catch (error) {
             resp.status(500).json({msg:"Ocurrió un error en el servidor. Por favor intente más tarde."});
         }
@@ -14,12 +14,9 @@ module.exports = {
         const result = req.body;
         try {
             const resultado = await calibrationModel.create(result);
-            resp.json(resultado);
+            resp.status(200).json(resultado);
         } catch (error) {
-            console.log(error)
-            resp
-            .status(500)
-            .json(error);
+            resp.status(500).json(error);
         }
     },
     deleteCalibration:async (req,resp)=>{
@@ -28,11 +25,9 @@ module.exports = {
             const resultDelete = await calibrationModel.deleteOne({_id:id},(error)=>{
                 console.log(error);
             });
-            resp.json(resultDelete);
+            resp.status(200).json(resultDelete);
         } catch (error) {
-            resp
-            .status(500)
-            .json({msg:"Ocurrió un error en el servidor. Por favor intente más tarde."});
+            resp.status(500).json({msg:"Ocurrió un error en el servidor. Por favor intente más tarde."});
         }
     },
     verifyConnection: (req, resp) => {
@@ -44,7 +39,7 @@ module.exports = {
 
         const request = https.request(serverUrl, options, (response) => {
             if (response.statusCode === 200) {
-                resp.json({ message: 'Conexión exitosa.' });
+                resp.status(200).json({ message: 'Conexión exitosa.' });
             } else {
                 resp.status(500).json('Fallo la conexión al servidor.');
             }

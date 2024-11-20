@@ -8,7 +8,7 @@ module.exports = {
         try {
             const customization = await customizationModel.findOne({ id_patient: objectId });
 
-            resp.json(customization);
+            resp.status(200).json(customization);
         } catch (error) {
             resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
@@ -29,7 +29,7 @@ module.exports = {
         try {
             const customizationUpdate = await customizationModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (customizationUpdate) {
-                resp.json({ msg: 'Documento actualizado exitosamente.' });
+                resp.status(200).json({ msg: 'Documento actualizado exitosamente.' });
             } else {
                 resp.status(404).json({ msg: 'Documento no encontrado.' });
             }

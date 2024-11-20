@@ -9,10 +9,10 @@ module.exports = {
             const results = await resultModel.findOne({id_ejercicio: objectId, fecha: fecha, hora: hora});
 
             if(results){
-                resp.json(results);
+                resp.status(200).json(results);
             }
             else{
-                resp.json({ msg: "No hay información", datos: "" })
+                resp.status(200).json({ msg: "No hay información", datos: "" })
             }
         } catch (error) {
             resp.status(500).json({ msg:"Ocurrió un error en el servidor. Por favor intente más tarde." });

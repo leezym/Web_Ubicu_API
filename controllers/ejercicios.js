@@ -8,7 +8,7 @@ module.exports = {
         try {
             const ejercicios = await ejercicioModel.find({ id_patient: objectId });
             
-            resp.json(ejercicios);
+            resp.status(200).json(ejercicios);
         } catch (error) {
             resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
@@ -19,9 +19,7 @@ module.exports = {
             const newEjercicio = await ejercicioModel.create(ejercicio);
             resp.status(200).json(newEjercicio);
         } catch (error) {
-            resp
-                .status(500)
-                .json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     updateEjercicio: async(req, resp) => {
@@ -31,23 +29,21 @@ module.exports = {
         try {
             const ejercicioUpdate = await ejercicioModel.findByIdAndUpdate(_id, entrada, { new: true });
             if (ejercicioUpdate) {
-                resp.json({ msg: 'Documento actualizado exitosamente.' });
+                resp.status(200).json({ msg: 'Documento actualizado exitosamente.' });
             } else {
                 resp.status(404).json({ msg: 'Documento no encontrado.' });
             }
         } catch (error) {
-            resp
-                .status(500)
-                .json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     },
     getEjerciciobyId: async(req, resp) => {
         const { id_ejercicio } = req.body;
         try {
             const ejercicio = await ejercicioModel.findById(id_ejercicio);
-            resp.json(ejercicio);
+            resp.status(200).json(ejercicio);
         } catch (error) {
-            resp.jsonStatus(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
+            resp.status(500).json({ msg: "Ocurrió un error en el servidor. Por favor intente más tarde." });
         }
     }
 }

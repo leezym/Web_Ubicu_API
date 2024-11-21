@@ -144,13 +144,13 @@ module.exports = {
             let transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'ubicu.sistema@gmail.com',
-                    pass: 'xetz iduj ijio mnct'
+                    user: process.env.EMAIL,
+                    pass: process.env.EMAIL_PASSWORD
                 }
             });
 
             // Enviar el correo
-            let info = await transporter.jsonMail({
+            let info = await transporter.sendMail({
                 from: '"UBICU: Fisioterapia Respiratoria" <ubicu.sistema@gmail.com>',
                 to: user.email,
                 subject: "Recuperación de contraseña",

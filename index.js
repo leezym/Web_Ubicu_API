@@ -5,6 +5,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
+require('dotenv').config();
+
 mongo.conectar(app);
 
 app.use(bodyParser.urlencoded({ extended: true }));

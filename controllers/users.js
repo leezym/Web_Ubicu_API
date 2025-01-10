@@ -134,24 +134,32 @@ module.exports = {
             { 
                 id: user._id, 
                 type: 'password_reset',
-                iat: Date.now()
+                iat: Math.floor(Date.now() / 1000)
             }, 
             secret, 
             { expiresIn: '1h' }
-        );
+            );
+
+            // Verificar que las credenciales de correo están definidas
+            if (!process.env.EMAIL || !process.env.EMAIL_PASSWORD) {
+                return res.status(500).json({ msg: 'Error en la configuración del servidor.' });
+            }
 
             // Configurar el transporte de correo
             let transporter = nodemailer.createTransport({
-                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false,
                 auth: {
                     user: process.env.EMAIL,
                     pass: process.env.EMAIL_PASSWORD
-                }
+                },
+                tls: { rejectUnauthorized: false }
             });
 
             // Enviar el correo
             let info = await transporter.sendMail({
-                from: '"UBICU: Fisioterapia Respiratoria" <ubicu.sistema@gmail.com>',
+                from: `"UBICU: Fisioterapia Respiratoria" <${process.env.EMAIL}>`,
                 to: user.email,
                 subject: "Recuperación de contraseña",
                 text: `Para restablecer tu contraseña, haz clic en el siguiente enlace: 

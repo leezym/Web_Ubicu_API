@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const uri = "mongodb://admin:admin@44.198.30.162:27017/ubicu?authSource=admin";
+const uri = "mongodb://admin:admin@54.81.16.94:27017/ubicu?authSource=admin";
 mongoose.Promise = global.Promise;
 
 module.exports = {

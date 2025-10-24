@@ -10,6 +10,16 @@ const userSchema = new mongo.Schema({
     password: { type: String, required: true }
 });
 
+userSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, saltRounds);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 userSchema.methods.isCorrectPassword = async function(password) {
     try {
         const same = await bcrypt.compare(password, this.password);

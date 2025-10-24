@@ -1,7 +1,7 @@
 const patientModel = require("../models/patient");
 const jwt = require('jsonwebtoken');
 const res = require("express/lib/response");
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const mongo = require('mongoose');
 
 const secret = 'mysecretstotoken';
@@ -29,7 +29,7 @@ module.exports = {
         try {
 
             if (password) {
-                bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
+                bcryptjs.hash(password, saltRounds, async (err, hashedPassword) => {
                     if (err) {
                         resp.status(500).send({ msg: 'Error al encriptar la contraseña' });
                     } else {

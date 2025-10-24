@@ -1,7 +1,7 @@
 const userModel = require("../models/user");
 const jwt = require('jsonwebtoken');
 const res = require("express/lib/response");
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 
 const secret = 'mysecretstotoken';
 
@@ -77,7 +77,7 @@ module.exports = {
         const saltRounds = 10;
       
         try {
-            const passwordMatches = await bcrypt.compare(password_actual, password);
+            const passwordMatches = await bcryptjs.compare(password_actual, password);
         
             if (!passwordMatches) {
                 resp.send({ msg: 'La contraseña actual no es correcta' });
@@ -87,7 +87,7 @@ module.exports = {
                 resp.send({ msg: 'Las nuevas contraseñas no coinciden' });
             }
       
-            bcrypt.hash(password_nueva, saltRounds, async (err, hashedPassword) => {
+            bcryptjs.hash(password_nueva, saltRounds, async (err, hashedPassword) => {
                 if (err) {
                 return resp.status(500).send({ msg: 'Error al encriptar la contraseña' });
                 }

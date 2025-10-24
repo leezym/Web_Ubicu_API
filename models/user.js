@@ -2,8 +2,6 @@ const mongo = require("mongoose");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-mongo.set('useCreateIndex', true);
-
 const userSchema = new mongo.Schema({
     nombre: { type: String, required: true },
     cedula: { type: Number, required: true, unique: true },
@@ -20,7 +18,5 @@ userSchema.methods.isCorrectPassword = async function(password) {
         throw err;
     }
 };
-
-userSchema.index({ cedula: 1 });
 
 module.exports = mongo.model("User", userSchema);

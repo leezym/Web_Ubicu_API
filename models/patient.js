@@ -2,8 +2,6 @@ const mongo = require("mongoose");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-mongo.set('useCreateIndex', true);
-
 const patientSchema = new mongo.Schema({
     nombre: { type: String, required: true },
     cedula: { type: Number, required: true, unique: true },
@@ -18,9 +16,6 @@ const patientSchema = new mongo.Schema({
     password: { type: String, required: true },
     id_user: { type: mongo.Schema.Types.ObjectId, ref: 'User', required: true }
 });
-
-patientSchema.index({ cedula: 1 });
-patientSchema.index({ id_user: 1 });
 
 patientSchema.methods.isCorrectPassword = async function(password) {
     try {

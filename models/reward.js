@@ -12,6 +12,4 @@ const rewardSchema = new mongo.Schema({
     id_patient: { type: mongo.Schema.Types.ObjectId, ref: 'Patient', required: true, unique: true }
 });
 
-rewardSchema.index({ id_patient: 1 });
-
 module.exports = mongo.model("Rewards", rewardSchema);

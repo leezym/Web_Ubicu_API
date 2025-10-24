@@ -1,7 +1,5 @@
 const mongo = require("mongoose");
 
-mongo.set('useCreateIndex', true);
-
 const ejercicioSchema = new mongo.Schema({
     nombre: { type: String, required: true },
     duracion_total: { type: Number, required: true },
@@ -17,7 +15,5 @@ const ejercicioSchema = new mongo.Schema({
     hora_inicio: { type: Number, required: true },
     id_patient: { type: mongo.Schema.Types.ObjectId, ref: 'Patient', required: true }
 });
-
-ejercicioSchema.index({ id_patient: 1 });
 
 module.exports = mongo.model("Ejercicio", ejercicioSchema);

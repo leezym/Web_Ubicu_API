@@ -91,12 +91,12 @@ module.exports = {
         try {
             const user = await patientModel.findOne({ cedula: cedula });
             if (!user) {
-                return res.status(401).json('Usuario incorrecto');
+                return res.status(401).json({msg: 'Usuario incorrecto'});
             }
     
             const same = await user.isCorrectPassword(password);
             if (!same) {
-                return res.status(401).json('Contraseña incorrecta');
+                return res.status(401).json({msg: 'Contraseña incorrecta'});
             }
     
             // Issue token
@@ -104,7 +104,7 @@ module.exports = {
             const token = jwt.sign(payload, secret, { expiresIn: '3h' });
             res.status(200).json({ token: token, user: user });
         } catch (err) {
-            res.status(500).json('Error del servidor');
+            res.status(500).json({msg: 'Error del servidor'});
         }
     }    
 }

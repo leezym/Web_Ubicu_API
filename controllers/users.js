@@ -41,7 +41,7 @@ module.exports = {
             const user = await userModel.findOne({ cedula: cedula });
     
             if (!user) {
-                return res.status(400).json({ msg: 'Usuario incorrecto' });
+                return res.status(400).json({ msg: 'Usuario no existe' });
             }
     
             const same = await user.isCorrectPassword(password);
@@ -136,4 +136,5 @@ module.exports = {
         resp.status(500).json({ msg: 'Ocurrió un error en el servidor' });
     }
 }*/
+
 }

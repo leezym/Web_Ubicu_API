@@ -22,6 +22,63 @@ module.exports = {
             resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
+    createPatientWithDefaults: async (req, res) => {
+        const session = await mongoose.startSession();
+        session.startTransaction();
+
+        try {
+            const patientData = req.body;
+
+            const existingPatient = await patientModel.findOne(
+                { cedula: patientData.cedula }
+            ).session(session);
+
+            if (existingPatient) {
+                throw new Error('El usuario ya existe');
+            }
+
+            const patient = await patientModel.create(
+                [patientData],
+                { session }
+            );
+
+            const patientId = patient[0]._id;
+
+            await rewardsModel.create([{
+                all_badges_array: "0,0,0,0,0,0,0;0,0,0,0,0,0,0;0,0,0,0,0,0,0;0,0,0,0,0,0,0;",
+                session_reward: 0,
+                day_reward: 0,
+                total_reward: 0,
+                total_series: 0,
+                total_sessions: 0,
+                total_days: 0,
+                total_weeks: 0,
+                id_patient: patientId
+            }], { session });
+
+            await customizationsModel.create([{
+                id_customization: 0,
+                id_item_fondos_array: "0,-1,-1,-1,-1",
+                id_item_figuras_array: "0,-1,-1,-1,-1",
+                all_fondos_items_array: "1,1,1;0,0,0;0,0,0;0,0,0;0,0,0;",
+                all_figuras_items_array: "1,1,1;0,0,0;0,0,0;0,0,0;0,0,0;",
+                id_patient: patientId
+            }], { session });
+
+            await session.commitTransaction();
+            session.endSession();
+
+            res.status(201).json(patient[0]);
+
+        } catch (error) {
+            await session.abortTransaction();
+            session.endSession();
+
+            res.status(500).json({
+                msg: error.message || 'Error creando paciente'
+            });
+        }
+    },
     updatePatient: async(req, resp) => {
         const { cedula, password } = req.body;
         const entrada = req.body;

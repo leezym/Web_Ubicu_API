@@ -11,5 +11,6 @@ module.exports = (app) => {
     app.post("/getPatientbyCc", withAuth, patientController.getPatientbyCc);
     app.post("/getPatientbyUser", withAuth, patientController.getPatientbyUser);
     app.post("/createPatient", withAuth, patientController.createPatient);
+    app.post("/createPatientWithDefaults", withAuth, patientController.createPatientWithDefaults);
     app.put("/updatePatient", withAuth, patientController.updatePatient);
 }

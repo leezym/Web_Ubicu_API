@@ -44,6 +44,13 @@ module.exports = {
 
             const patientId = patient[0]._id;
 
+            await exerciseDatesModel.create([{
+                current_exercise_final_date: null,
+                current_exercise_date: null,
+                exercise_hour_array: null,
+                id_patient: patientId
+            }], { session });
+
             await rewardsModel.create([{
                 all_badges_array: "0,0,0,0,0,0,0;0,0,0,0,0,0,0;0,0,0,0,0,0,0;0,0,0,0,0,0,0;",
                 session_reward: 0,

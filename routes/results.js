@@ -8,4 +8,5 @@ module.exports = (app) =>{
     }),
     app.post("/allResultsByEjercicio", withAuth, resultController.allResultsByEjercicio);
     app.post("/createResult", withAuth, resultController.createResult);
+    app.post("/allResultsByDate", withAuth, resultController.allResultsByDate);    
 }

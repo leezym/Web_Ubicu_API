@@ -13,6 +13,15 @@ module.exports = {
             resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }
     },
+    getEjerciciobyId: async(req, resp) => {
+        const { id_ejercicio } = req.body;
+        try {
+            const ejercicio = await ejercicioModel.findById(id_ejercicio);
+            resp.send(ejercicio);
+        } catch (error) {
+            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
+        }
+    },
     createEjercicio: async(req, resp) => {
         const ejercicio = req.body;
         try {
@@ -38,15 +47,6 @@ module.exports = {
             resp
                 .status(500)
                 .send({ msg: "Ocurrió un error en el servidor" });
-        }
-    },
-    getEjerciciobyId: async(req, resp) => {
-        const { id_ejercicio } = req.body;
-        try {
-            const ejercicio = await ejercicioModel.findById(id_ejercicio);
-            resp.send(ejercicio);
-        } catch (error) {
-            resp.sendStatus(500).json({ msg: "Ocurrió un error en el servidor" });
         }
     }
 }

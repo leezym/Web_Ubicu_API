@@ -24,7 +24,17 @@ module.exports = {
             const newResult = await resultModel.create(result);
             resp.status(201).send(newResult);
         } catch (error) {
-            resp.status(500).send(error);
+            resp.status(500).json({ msg:"Ocurrió un error en el servidor" });
+        }
+    },
+    allResultsByDate: async (req,resp)=>{
+        const { id_ejercicio } = req.body;
+        const objectId = mongo.Types.ObjectId(id_ejercicio);
+        try {
+            const results = await resultModel.find({ id_ejercicio: objectId });
+            resp.send(results);
+        } catch (error) {
+            resp.status(500).json({ msg:"Ocurrió un error en el servidor" });
         }
     }
 }

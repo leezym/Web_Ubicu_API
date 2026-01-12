@@ -8,7 +8,7 @@ module.exports = {
         try {
             const exerciseDates = await exerciseDateModel.find({ id_patient: objectId });
             
-            resp.send(exerciseDateModels);
+            resp.send(exerciseDates);
         } catch (error) {
             resp.status(500).send({ msg: "Ocurrió un error en el servidor" });
         }

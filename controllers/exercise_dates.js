@@ -6,7 +6,7 @@ module.exports = {
         const { id_patient } = req.body;
         const objectId = mongo.Types.ObjectId(id_patient);
         try {
-            const exerciseDates = await exerciseDateModel.find({ id_patient: objectId });
+            const exerciseDates = await exerciseDateModel.findOne({ id_patient: objectId });
             
             resp.send(exerciseDates);
         } catch (error) {

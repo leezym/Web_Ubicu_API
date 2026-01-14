@@ -8,12 +8,25 @@ const mongo = require('mongoose');
 
 const secret = 'mysecretstotoken';
 
+function validateRequiredFields(body, requiredFields) {
+    for (let field of requiredFields) {
+        if (!body[field] || body[field] === '') {
+            return false;
+        }
+    }
+    return true;
+}
+
 module.exports = {
     createPatient: async(req, resp) => {
+        const requiredFields = ['nombre', 'cedula', 'telefono', 'email', 'edad', 'sexo', 'peso', 'altura', 'direccion', 'ciudad', 'password', 'id_user'];
+        if (!validateRequiredFields(req.body, requiredFields)) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const patient = req.body;
         try {
             const existingPatient = await patientModel.findOne({ cedula: patient.cedula });
-    
+
             if (existingPatient) {
                 return resp.status(400).json({ msg: 'El usuario ya existe' });
             }
@@ -25,6 +38,10 @@ module.exports = {
         }
     },
     createPatientWithDefaults: async (req, res) => {
+        const requiredFields = ['nombre', 'cedula', 'telefono', 'email', 'edad', 'sexo', 'peso', 'altura', 'direccion', 'ciudad', 'password', 'id_user'];
+        if (!validateRequiredFields(req.body, requiredFields)) {
+            return res.status(400).send({ msg: "Faltan datos." });
+        }
         const session = await mongo.startSession();
         session.startTransaction();
 
@@ -89,6 +106,9 @@ module.exports = {
         }
     },
     updatePatient: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['cedula', 'password'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { cedula, password } = req.body;
         const entrada = req.body;
         const saltRounds = 10;
@@ -125,6 +145,9 @@ module.exports = {
         }
     },
     getPatientbyId: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['id_patient'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { id_patient } = req.body;
         try {
             const patients = await patientModel.findById(id_patient);
@@ -134,6 +157,9 @@ module.exports = {
         }
     },
     getPatientbyCc: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['cedula'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { cedula } = req.body;
         try {
             const patients = await patientModel.findOne({ cedula: cedula });
@@ -143,6 +169,9 @@ module.exports = {
         }
     },
     getPatientbyUser: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['id_user'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { id_user } = req.body;
         const objectId = mongo.Types.ObjectId(id_user);
         try {
@@ -153,18 +182,21 @@ module.exports = {
         }
     },
     authenticatePatient: async(req, res) => {
+        if (!validateRequiredFields(req.body, ['cedula', 'password'])) {
+            return res.status(400).send({ msg: "Faltan datos." });
+        }
         const { cedula, password } = req.body;
         try {
             const user = await patientModel.findOne({ cedula: cedula });
             if (!user) {
                 return res.status(401).json({msg: 'Usuario incorrecto'});
             }
-    
+
             const same = await user.isCorrectPassword(password);
             if (!same) {
                 return res.status(401).json({msg: 'Contraseña incorrecta'});
             }
-    
+
             // Issue token
             const payload = { cedula };
             const token = jwt.sign(payload, secret, { expiresIn: '3h' });
@@ -172,5 +204,5 @@ module.exports = {
         } catch (err) {
             res.status(500).json({msg: 'Error del servidor'});
         }
-    }    
+    }
 }

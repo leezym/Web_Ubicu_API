@@ -1,8 +1,20 @@
 const resultModel = require("../models/result");
 const mongo = require('mongoose');
 
+function validateRequiredFields(body, requiredFields) {
+    for (let field of requiredFields) {
+        if (!body[field] || body[field] === '') {
+            return false;
+        }
+    }
+    return true;
+}
+
 module.exports = {
     allResultsByEjercicio: async (req,resp)=>{
+        if (!validateRequiredFields(req.body, ['id_ejercicio', 'fecha', 'hora'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const {id_ejercicio, fecha, hora} = req.body;
         const objectId = mongo.Types.ObjectId(id_ejercicio);
         try {
@@ -19,6 +31,10 @@ module.exports = {
         }
     },
     createResult:async (req,resp)=>{
+        const requiredFields = ['id_ejercicio', 'fecha', 'hora', 'datos'];
+        if (!validateRequiredFields(req.body, requiredFields)) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const result = req.body;
         try {
             const newResult = await resultModel.create(result);
@@ -28,6 +44,9 @@ module.exports = {
         }
     },
     allResultsByDate: async (req,resp)=>{
+        if (!validateRequiredFields(req.body, ['id_ejercicio'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { id_ejercicio } = req.body;
         const objectId = mongo.Types.ObjectId(id_ejercicio);
         try {

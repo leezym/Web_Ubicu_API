@@ -1,8 +1,20 @@
 const ejercicioModel = require("../models/ejercicio");
 const mongo = require('mongoose');
 
+function validateRequiredFields(body, requiredFields) {
+    for (let field of requiredFields) {
+        if (!body[field] || body[field] === '') {
+            return false;
+        }
+    }
+    return true;
+}
+
 module.exports = {
     allEjerciciosByPatient: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['id_patient'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { id_patient } = req.body;
         const objectId = mongo.Types.ObjectId(id_patient);
         try {
@@ -14,6 +26,9 @@ module.exports = {
         }
     },
     getEjerciciobyId: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['id_ejercicio'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { id_ejercicio } = req.body;
         try {
             const ejercicio = await ejercicioModel.findById(id_ejercicio);
@@ -23,6 +38,11 @@ module.exports = {
         }
     },
     createEjercicio: async(req, resp) => {
+        const requiredFields = ['nombre', 'duracion_total', 'frecuencia_dias', 'frecuencia_horas', 'repeticiones', 'series', 'periodos_descanso', 'apnea', 'flujo', 'hora_inicio', 'id_patient'];
+        if (!validateRequiredFields(req.body, requiredFields)) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
+
         const ejercicio = req.body;
         try {
             const newEjercicio = await ejercicioModel.create(ejercicio);
@@ -34,6 +54,9 @@ module.exports = {
         }
     },
     updateEjercicio: async(req, resp) => {
+        if (!validateRequiredFields(req.body, ['_id'])) {
+            return resp.status(400).send({ msg: "Faltan datos." });
+        }
         const { _id } = req.body;
         const entrada = req.body;
         try {

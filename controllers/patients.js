@@ -1,6 +1,8 @@
 const patientModel = require("../models/patient");
+const exerciseDateModel = require("../models/exercise_date");
+const rewardModel = require("../models/reward");
+const customizationModel = require("../models/customization");
 const jwt = require('jsonwebtoken');
-const res = require("express/lib/response");
 const bcryptjs = require('bcryptjs');
 const mongo = require('mongoose');
 
@@ -23,7 +25,7 @@ module.exports = {
         }
     },
     createPatientWithDefaults: async (req, res) => {
-        const session = await mongoose.startSession();
+        const session = await mongo.startSession();
         session.startTransaction();
 
         try {
@@ -44,14 +46,14 @@ module.exports = {
 
             const patientId = patient[0]._id;
 
-            await exerciseDatesModel.create([{
+            await exerciseDateModel.create([{
                 current_exercise_final_date: null,
                 current_exercise_date: null,
                 exercise_hour_array: null,
                 id_patient: patientId
             }], { session });
 
-            await rewardsModel.create([{
+            await rewardModel.create([{
                 all_badges_array: "0,0,0,0,0,0,0;0,0,0,0,0,0,0;0,0,0,0,0,0,0;0,0,0,0,0,0,0;",
                 session_reward: 0,
                 day_reward: 0,
@@ -63,7 +65,7 @@ module.exports = {
                 id_patient: patientId
             }], { session });
 
-            await customizationsModel.create([{
+            await customizationModel.create([{
                 id_customization: 0,
                 id_item_fondos_array: "0,-1,-1,-1,-1",
                 id_item_figuras_array: "0,-1,-1,-1,-1",

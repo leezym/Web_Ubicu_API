@@ -1,38 +1,61 @@
-const express = require("express");
-const mongo = require("./db/connectionMongo");
-const cors = require('cors');
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import mongo from "./db/connectionMongo.js";
+
 const app = express();
-const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
 
 mongo.conectar(app);
 
+// Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(cors({
-    allowedOrigins: [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:5001',
-        'https://server.ubicu.co/',
-        'http://server.ubicu.co/'
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5001",
+      "https://www.ubicu.co",
+      "https://ubicu.co",
+      "https://server.ubicu.co",
+      "http://server.ubicu.co",
     ],
-    headers: [
-        'X-HTTP-Method-Override', 'Content-Type', 'Accept', 'X-Access-Token', '*'
-    ]
-}));
-
+    allowedHeaders: [
+      "X-HTTP-Method-Override",
+      "Content-Type",
+      "Accept",
+      "X-Access-Token",
+      "*",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Access-Token", "Accept"]
+  })
+);
 
 app.use(cookieParser());
 
-const routeUsers = require("./routes/users")(app);
-const routePatients = require("./routes/patients")(app);
-const routeEjercicios = require("./routes/ejercicios")(app);
-const routeExerciseDates = require("./routes/exercise_dates")(app);
-const routeResults = require("./routes/results")(app);
-const routeRewards = require("./routes/rewards")(app);
-const routeCustomizations = require("./routes/customizations")(app);
+import routeUsers from "./routes/users.js";
+import routePatients from "./routes/patients.js";
+import routeEjercicios from "./routes/ejercicios.js";
+import routeExerciseDates from "./routes/exercise_dates.js";
+import routeResults from "./routes/results.js";
+import routeRewards from "./routes/rewards.js";
+import routeCustomizations from "./routes/customizations.js";
+import routePings from "./routes/pings.js";
 
-const port = 5001;
-app.listen(port, () => { console.log(port) })
+routeUsers(app);
+routePatients(app);
+routeEjercicios(app);
+routeExerciseDates(app);
+routeResults(app);
+routeRewards(app);
+routeCustomizations(app);
+routePings(app);
+
+const port = process.env.PORT || 5001;
+app.listen(port, () => console.log(`API running on ${port}`));

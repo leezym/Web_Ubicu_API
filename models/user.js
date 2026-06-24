@@ -10,23 +10,14 @@ const userSchema = new mongo.Schema({
     password: { type: String, required: true }
 });
 
-userSchema.pre("save", async function (next) {
-  try {
-    if (!this.isModified("password")) return next();
-    this.password = await bcryptjs.hash(this.password, saltRounds);
-    next();
-  } catch (err) {
-    next(err);
-  }
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcryptjs.hash(this.password, saltRounds);
 });
 
-userSchema.methods.isCorrectPassword = async function(password) {
-    try {
-        const same = await bcryptjs.compare(password, this.password);
-        return same;
-    } catch (err) {
-        throw err;
-    }
+userSchema.methods.isCorrectPassword = async function (password) {
+  const same = await bcryptjs.compare(password, this.password);
+  return same;
 };
 
 module.exports = mongo.model("User", userSchema);

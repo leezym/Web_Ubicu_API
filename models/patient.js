@@ -17,23 +17,13 @@ const patientSchema = new mongo.Schema({
     id_user: { type: mongo.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
-patientSchema.pre("save", async function (next) {
-  try {
-    if (!this.isModified("password")) return next();
-    this.password = await bcryptjs.hash(this.password, saltRounds);
-    next();
-  } catch (err) {
-    next(err);
-  }
+patientSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcryptjs.hash(this.password, saltRounds);
 });
 
-patientSchema.methods.isCorrectPassword = async function(password) {
-    try {
-        const same = await bcryptjs.compare(password, this.password);
-        return same;
-    } catch (err) {
-        throw err;
-    }
+patientSchema.methods.isCorrectPassword = async function (password) {
+  return await bcryptjs.compare(password, this.password);
 };
 
 module.exports = mongo.model("Patient", patientSchema);

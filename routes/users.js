@@ -22,4 +22,6 @@ export default function route(app) {
   app.post("/createUser", userController.createUser);
   app.put("/updateUser", withAuth, userController.updateUser);
   app.put("/updatePassword", withAuth, userController.updatePassword);
+  app.post("/forgotPassword", userController.forgotPassword);
+  app.post("/resetPassword", userController.resetPassword);
 }

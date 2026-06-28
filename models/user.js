@@ -7,7 +7,9 @@ const userSchema = new mongo.Schema({
     cedula: { type: Number, required: true, unique: true },
     telefono: { type: Number, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date }
 });
 
 userSchema.pre("save", async function () {

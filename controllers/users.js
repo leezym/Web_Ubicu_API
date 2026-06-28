@@ -1,6 +1,8 @@
 import userModel from "../models/user.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 // Compat: si no defines JWT_SECRET en .env, mantiene el secreto original.
 const secret = process.env.JWT_SECRET || "mysecretstotoken";
@@ -106,6 +108,89 @@ export async function getUserbyId(req, res) {
 
 // Compat con nombre viejo
 export const getUserbyI = getUserbyId;
+
+export async function forgotPassword(req, res) {
+  if (!validateRequiredFields(req.body, ["email"])) {
+    return res.status(400).send({ msg: "Faltan datos." });
+  }
+
+  const { email } = req.body;
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      // Respuesta genérica para no revelar si el email existe
+      return res.status(200).json({ msg: "Si el correo está registrado, recibirás un enlace de recuperación." });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    user.resetPasswordToken = tokenHash;
+    user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.FRONTEND_URL || "https://ubicu.co"}/#/ResetContrasena/${token}`;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: process.env.SMTP_SECURE === "true",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Ubicu" <${process.env.SMTP_USER}>`,
+      to: user.email,
+      subject: "Recuperación de contraseña - Ubicu",
+      html: `
+        <p>Hola ${user.nombre},</p>
+        <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+        <p>Haz clic en el siguiente enlace (válido por 1 hora):</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
+      `,
+    });
+
+    return res.status(200).json({ msg: "Si el correo está registrado, recibirás un enlace de recuperación." });
+  } catch (error) {
+    return res.status(500).json({ msg: "Ocurrió un error en el servidor." });
+  }
+}
+
+export async function resetPassword(req, res) {
+  if (!validateRequiredFields(req.body, ["token", "password_nueva"])) {
+    return res.status(400).send({ msg: "Faltan datos." });
+  }
+
+  const { token, password_nueva } = req.body;
+  const saltRounds = 10;
+
+  try {
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await userModel.findOne({
+      resetPasswordToken: tokenHash,
+      resetPasswordExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ msg: "El enlace de recuperación es inválido o ha expirado." });
+    }
+
+    user.password = await bcryptjs.hash(password_nueva, saltRounds);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({ msg: "Contraseña actualizada exitosamente." });
+  } catch (error) {
+    return res.status(500).json({ msg: "Ocurrió un error en el servidor." });
+  }
+}
 
 export async function updatePassword(req, res) {
   const requiredFields = ["_id", "password_actual", "password", "password_nueva", "repeat_password_nueva"];

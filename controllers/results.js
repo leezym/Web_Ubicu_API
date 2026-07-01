@@ -103,7 +103,8 @@ export async function presignUpload(req, res) {
 export async function confirmUpload(req, res) {
   try {
     const resultId = req.params.id;
-    const { s3Key, preview } = req.body || {};
+    const s3Key = req.body?.s3Key || req.query?.s3Key;
+    const preview = req.body?.preview;
 
     if (!s3Key) return res.status(400).json({ ok: false, msg: "Falta s3Key" });
 

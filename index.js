@@ -28,12 +28,11 @@ app.use(
       "X-HTTP-Method-Override",
       "Content-Type",
       "Accept",
+      "Authorization",
       "X-Access-Token",
-      "*",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Access-Token", "Accept"]
   })
 );
 
